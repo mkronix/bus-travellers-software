@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, MapPin, Search } from 'lucide-react';
+import { MapPin, Search } from 'lucide-react';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +18,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   value,
   onChange,
   placeholder = "Select...",
-  icon = <MapPin className="h-5 w-5 icon-primary" />,
+  icon = <MapPin className="h-4 w-4 text-primary" />,
   className
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +59,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     <div ref={containerRef} className={cn("relative", className)}>
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
             {icon}
           </div>
         )}
@@ -70,36 +70,30 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
           className={cn(
-            "input-field",
-            icon ? "pl-10" : "pl-4",
-            "pr-10"
+            "w-full h-12 border-2 border-gray-200 rounded-xl bg-white",
+            "focus:border-primary focus:ring-2 focus:ring-primary/20",
+            "transition-all duration-200 text-base",
+            icon ? "pl-12" : "pl-4",
+            "pr-4"
           )}
           autoComplete="off"
         />
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          <ChevronDown 
-            className={cn(
-              "h-4 w-4 text-gray-400 transition-transform duration-200",
-              isOpen && "rotate-180"
-            )} 
-          />
-        </div>
       </div>
 
       {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {filteredOptions.map((option) => (
             <div
               key={option.id}
-              className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors duration-150 border-b border-gray-100 last:border-b-0"
+              className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl"
               onClick={() => handleOptionClick(option)}
             >
-              <MapPin className="h-4 w-4 icon-primary mr-3 flex-shrink-0" />
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
               <div className="flex-1">
                 <div className="font-medium text-gray-900">{option.name}</div>
-                {option.code && (
-                  <div className="text-sm text-gray-500">{option.code}</div>
-                )}
+                <div className="text-sm text-gray-500">Gujarat, India</div>
               </div>
             </div>
           ))}
@@ -107,9 +101,11 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
       )}
 
       {isOpen && filteredOptions.length === 0 && value && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg">
           <div className="flex items-center px-4 py-3 text-gray-500">
-            <Search className="h-4 w-4 mr-3" />
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+              <Search className="h-4 w-4" />
+            </div>
             <span>No cities found</span>
           </div>
         </div>
