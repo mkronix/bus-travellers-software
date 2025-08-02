@@ -3,50 +3,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Rajdhani Travels Design System */
 
 @layer base {
   :root {
-    --background: 37 17 15;
-    --foreground: 37 17 15;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
 
-    --card: 48 25 13;
-    --card-foreground: 37 17 15;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
 
-    --popover: 48 25 13;
-    --popover-foreground: 37 17 15;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
 
-    --primary: 19 38 35;
-    --primary-foreground: 48 25 13;
+    --primary: 253 32% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 33 18 14;
-    --secondary-foreground: 48 25 13;
+    --secondary: 73 67% 39%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 33 18 14;
-    --muted-foreground: 37 17 15;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 33 18 14;
-    --accent-foreground: 48 25 13;
+    --accent: 0 0% 96%;
+    --accent-foreground: 253 32% 42%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 48 25 13;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 33 18 14;
-    --input: 33 18 14;
-    --ring: 19 38 35;
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 253 32% 42%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 48 25 13;
-    --sidebar-foreground: 37 17 15;
-    --sidebar-primary: 37 17 15;
-    --sidebar-primary-foreground: 48 25 13;
-    --sidebar-accent: 33 18 14;
-    --sidebar-accent-foreground: 37 17 15;
-    --sidebar-border: 33 18 14;
-    --sidebar-ring: 19 38 35;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 13%;
+    --sidebar-primary: 253 32% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 253 32% 42%;
+    --sidebar-border: 0 0% 89%;
+    --sidebar-ring: 253 32% 42%;
   }
 }
 
@@ -56,24 +54,61 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-cream-50 text-browning-900 font-sans;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-warmBrown-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-warmBrown-400 hover:shadow-lg active:scale-95;
+    @apply bg-rajdhani-primary text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-rajdhani-primaryDark hover:shadow-lg active:scale-95 flex items-center gap-2;
   }
   
   .btn-secondary {
-    @apply bg-cream-100 text-browning-900 px-6 py-3 rounded-lg font-medium border border-warmBrown-200 transition-all duration-200 hover:bg-cream-200 hover:shadow-md;
+    @apply bg-rajdhani-secondary text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-rajdhani-secondaryDark hover:shadow-lg active:scale-95 flex items-center gap-2;
+  }
+  
+  .btn-outline {
+    @apply bg-white text-rajdhani-primary px-6 py-3 rounded-lg font-semibold border-2 border-rajdhani-primary transition-all duration-300 hover:bg-rajdhani-primary hover:text-white hover:shadow-lg active:scale-95 flex items-center gap-2;
   }
   
   .card-shadow {
-    @apply shadow-sm hover:shadow-lg transition-shadow duration-300;
+    @apply shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100;
   }
   
   .input-field {
-    @apply w-full px-4 py-3 bg-white border border-warmBrown-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-warmBrown-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rajdhani-primary focus:border-rajdhani-primary transition-all duration-200;
   }
+
+  .gradient-bg {
+    @apply bg-gradient-to-br from-rajdhani-primary via-rajdhani-primaryLight to-rajdhani-secondary;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-rajdhani-primary to-rajdhani-secondary bg-clip-text text-transparent;
+  }
+
+  .icon-primary {
+    @apply text-rajdhani-primary;
+  }
+
+  .icon-secondary {
+    @apply text-rajdhani-secondary;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-rajdhani-primary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-rajdhani-primaryDark;
 }
