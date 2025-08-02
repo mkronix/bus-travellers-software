@@ -1,10 +1,10 @@
 
-import { useState } from 'react';
-import { Bus, Star, Clock, Wifi, Coffee, Shield, MapPin, Filter } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Clock, Coffee, Filter, MapPin, Shield, Star, Wifi } from 'lucide-react';
+import { useState } from 'react';
 
 interface BusResult {
   id: number;
@@ -29,12 +29,12 @@ const SearchResults = () => {
   const busResults: BusResult[] = [
     {
       id: 1,
-      operator: "Rajkot Express",
+      operator: "Rajdhani Express",
       busType: "AC Sleeper",
-      departureTime: "06:30",
-      arrivalTime: "11:30",
-      duration: "5h 00m",
-      price: 450,
+      departureTime: "04:30",
+      arrivalTime: "9:30",
+      duration: "14h 00m",
+      price: 1450,
       rating: 4.5,
       reviews: 128,
       amenities: ["AC", "WiFi", "Charging Port", "Blanket"],
@@ -44,33 +44,18 @@ const SearchResults = () => {
     },
     {
       id: 2,
-      operator: "Gujarat Travels",
+      operator: "Rajdhani Express",
       busType: "Non-AC Seater",
       departureTime: "08:15",
-      arrivalTime: "13:45",
-      duration: "5h 30m",
-      price: 320,
+      arrivalTime: "10:45",
+      duration: "15h 30m",
+      price: 1550,
       rating: 4.2,
       reviews: 89,
       amenities: ["Charging Port", "Music System"],
       seats: 12,
       boardingPoints: ["Central Bus Station", "Ring Road"],
       droppingPoints: ["Paldi", "Vastrapur", "Prahlad Nagar"]
-    },
-    {
-      id: 3,
-      operator: "Shrinath Travels",
-      busType: "Volvo AC",
-      departureTime: "10:00",
-      arrivalTime: "15:15",
-      duration: "5h 15m",
-      price: 580,
-      rating: 4.7,
-      reviews: 156,
-      amenities: ["AC", "WiFi", "TV", "Snacks", "Water"],
-      seats: 8,
-      boardingPoints: ["Jubilee Garden", "Race Course"],
-      droppingPoints: ["Navrangpura", "Satellite", "Thaltej"]
     }
   ];
 
@@ -95,7 +80,7 @@ const SearchResults = () => {
               <h1 className="text-2xl font-bold text-browning-900">Rajkot → Ahmedabad</h1>
               <p className="text-browning-700">Today, 15 Dec • {busResults.length} buses found</p>
             </div>
-            
+
             <div className="flex gap-4">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40">
@@ -108,7 +93,7 @@ const SearchResults = () => {
                   <SelectItem value="departure">Departure Time</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={filterBy} onValueChange={setFilterBy}>
                 <SelectTrigger className="w-40">
                   <Filter className="h-4 w-4 mr-2" />
@@ -166,12 +151,12 @@ const SearchResults = () => {
                           <p className="text-2xl font-bold text-browning-900">{bus.departureTime}</p>
                           <p className="text-sm text-browning-600">Rajkot</p>
                         </div>
-                        
+
                         <div className="flex-1 text-center">
                           <Clock className="h-4 w-4 text-warmBrown-500 mx-auto mb-1" />
                           <p className="text-sm text-browning-700">{bus.duration}</p>
                         </div>
-                        
+
                         <div className="text-center">
                           <p className="text-2xl font-bold text-browning-900">{bus.arrivalTime}</p>
                           <p className="text-sm text-browning-600">Ahmedabad</p>
@@ -208,7 +193,7 @@ const SearchResults = () => {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <MapPin className="h-4 w-4 text-warmBrown-500" />
