@@ -1,9 +1,9 @@
 
 import { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Plus, Trash2, User, Mail, Phone, Calendar } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, User, Mail, Phone, Bed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,8 @@ const passengerSchema = z.object({
 });
 
 const formSchema = z.object({
-  passengers: z.array(passengerSchema).min(1, 'At least one passenger is required'),
+  mainPassenger: passengerSchema,
+  additionalPassengers: z.array(passengerSchema).max(5, 'Maximum 6 passengers allowed'),
   contactPerson: z.object({
     name: z.string().min(2, 'Contact person name is required'),
     mobile: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid Indian mobile number'),
@@ -31,12 +32,17 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const PassengerForm = () => {
-  const [selectedSeats] = useState(['1A', '1B']); // Mock selected seats
-  const [totalAmount] = useState(900); // Mock total amount
+interface PassengerFormProps {
+  selectedBus: any;
+  selectedSeat: string;
+  searchData: any;
+  onBackToSeat: () => void;
+}
+
+const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: PassengerFormProps) => {
+  const [additionalPassengers, setAdditionalPassengers] = useState<any[]>([]);
 
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -45,13 +51,14 @@ const PassengerForm = () => {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      passengers: selectedSeats.map(() => ({
+      mainPassenger: {
         name: '',
         age: 0,
         gender: undefined,
         mobile: '',
         email: '',
-      })),
+      },
+      additionalPassengers: [],
       contactPerson: {
         name: '',
         mobile: '',
@@ -60,39 +67,48 @@ const PassengerForm = () => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'passengers',
-  });
-
   const onSubmit = (data: FormData) => {
-    console.log('Form submitted:', data);
-    toast.success('Passenger details saved! Proceeding to payment...');
-    // Here you would typically navigate to payment page
+    console.log('Booking confirmed:', {
+      ...data,
+      selectedBus,
+      selectedSeat,
+      searchData,
+    });
+    toast.success('🎫 Booking confirmed! E-ticket will be sent via WhatsApp');
   };
 
-  const copyContactToPassenger = (index: number) => {
+  const copyContactToMainPassenger = () => {
     const contactPerson = watch('contactPerson');
     if (contactPerson.name && contactPerson.mobile) {
-      setValue(`passengers.${index}.name`, contactPerson.name);
-      setValue(`passengers.${index}.mobile`, contactPerson.mobile);
-      setValue(`passengers.${index}.email`, contactPerson.email || '');
-      toast.success('Contact details copied to passenger');
+      setValue('mainPassenger.name', contactPerson.name);
+      setValue('mainPassenger.mobile', contactPerson.mobile);
+      setValue('mainPassenger.email', contactPerson.email || '');
+      toast.success('Contact details copied to main passenger');
     }
   };
 
+  const addAdditionalPassenger = () => {
+    if (additionalPassengers.length < 5) {
+      setAdditionalPassengers([...additionalPassengers, {}]);
+    }
+  };
+
+  const removeAdditionalPassenger = (index: number) => {
+    setAdditionalPassengers(additionalPassengers.filter((_, i) => i !== index));
+  };
+
   return (
-    <div className="min-h-screen bg-cream-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-warmBrown-200 py-4">
+      <div className="bg-white border-b border-gray-200 py-4">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="p-2">
+            <Button variant="ghost" onClick={onBackToSeat} className="p-2">
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-browning-900">Passenger Details</h1>
-              <p className="text-browning-700">Enter passenger information for your booking</p>
+              <h1 className="text-xl font-bold text-gray-900">Passenger Details</h1>
+              <p className="text-gray-700">Enter passenger information for your booking</p>
             </div>
           </div>
         </div>
@@ -107,7 +123,7 @@ const PassengerForm = () => {
               <Card className="bg-white">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-warmBrown-500" />
+                    <Phone className="h-5 w-5 text-primary" />
                     Contact Person Details
                   </CardTitle>
                 </CardHeader>
@@ -119,7 +135,7 @@ const PassengerForm = () => {
                         id="contactName"
                         {...register('contactPerson.name')}
                         placeholder="Enter full name"
-                        className="input-field"
+                        className="mt-1"
                       />
                       {errors.contactPerson?.name && (
                         <p className="text-sm text-red-600 mt-1">{errors.contactPerson.name.message}</p>
@@ -132,7 +148,7 @@ const PassengerForm = () => {
                         id="contactMobile"
                         {...register('contactPerson.mobile')}
                         placeholder="Enter 10-digit mobile number"
-                        className="input-field"
+                        className="mt-1"
                       />
                       {errors.contactPerson?.mobile && (
                         <p className="text-sm text-red-600 mt-1">{errors.contactPerson.mobile.message}</p>
@@ -147,7 +163,7 @@ const PassengerForm = () => {
                       type="email"
                       {...register('contactPerson.email')}
                       placeholder="Enter email address"
-                      className="input-field"
+                      className="mt-1"
                     />
                     {errors.contactPerson?.email && (
                       <p className="text-sm text-red-600 mt-1">{errors.contactPerson.email.message}</p>
@@ -156,139 +172,206 @@ const PassengerForm = () => {
                 </CardContent>
               </Card>
 
-              {/* Passengers */}
+              {/* Main Passenger */}
               <Card className="bg-white">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-warmBrown-500" />
-                      Passenger Details
+                      <User className="h-5 w-5 text-primary" />
+                      Main Passenger Details
                     </span>
-                    <Badge variant="outline">{fields.length} Passenger(s)</Badge>
+                    <Badge variant="secondary">Seat {selectedSeat}</Badge>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {fields.map((field, index) => (
-                    <div key={field.id} className="border border-warmBrown-200 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-browning-900">
-                          Passenger {index + 1} 
-                          <Badge variant="secondary" className="ml-2">Seat {selectedSeats[index]}</Badge>
-                        </h3>
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyContactToPassenger(index)}
-                          >
-                            Copy Contact Details
-                          </Button>
-                          {fields.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => remove(index)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor={`passenger-${index}-name`}>Full Name *</Label>
-                          <Input
-                            id={`passenger-${index}-name`}
-                            {...register(`passengers.${index}.name`)}
-                            placeholder="Enter full name"
-                            className="input-field"
-                          />
-                          {errors.passengers?.[index]?.name && (
-                            <p className="text-sm text-red-600 mt-1">{errors.passengers[index]?.name?.message}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <Label htmlFor={`passenger-${index}-age`}>Age *</Label>
-                          <Input
-                            id={`passenger-${index}-age`}
-                            type="number"
-                            {...register(`passengers.${index}.age`, { valueAsNumber: true })}
-                            placeholder="Enter age"
-                            className="input-field"
-                          />
-                          {errors.passengers?.[index]?.age && (
-                            <p className="text-sm text-red-600 mt-1">{errors.passengers[index]?.age?.message}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <Label htmlFor={`passenger-${index}-gender`}>Gender *</Label>
-                          <Select onValueChange={(value) => setValue(`passengers.${index}.gender`, value as any)}>
-                            <SelectTrigger className="input-field">
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.passengers?.[index]?.gender && (
-                            <p className="text-sm text-red-600 mt-1">{errors.passengers[index]?.gender?.message}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <Label htmlFor={`passenger-${index}-mobile`}>Mobile Number *</Label>
-                          <Input
-                            id={`passenger-${index}-mobile`}
-                            {...register(`passengers.${index}.mobile`)}
-                            placeholder="Enter 10-digit mobile number"
-                            className="input-field"
-                          />
-                          {errors.passengers?.[index]?.mobile && (
-                            <p className="text-sm text-red-600 mt-1">{errors.passengers[index]?.mobile?.message}</p>
-                          )}
-                        </div>
-
-                        <div className="md:col-span-2">
-                          <Label htmlFor={`passenger-${index}-email`}>Email Address (Optional)</Label>
-                          <Input
-                            id={`passenger-${index}-email`}
-                            type="email"
-                            {...register(`passengers.${index}.email`)}
-                            placeholder="Enter email address"
-                            className="input-field"
-                          />
-                          {errors.passengers?.[index]?.email && (
-                            <p className="text-sm text-red-600 mt-1">{errors.passengers[index]?.email?.message}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {fields.length < 6 && (
+                <CardContent className="space-y-4">
+                  <div className="flex justify-end mb-4">
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => append({ name: '', age: 0, gender: undefined, mobile: '', email: '' })}
-                      className="w-full"
+                      size="sm"
+                      onClick={copyContactToMainPassenger}
                     >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Another Passenger
+                      Copy Contact Details
                     </Button>
-                  )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="mainPassengerName">Full Name *</Label>
+                      <Input
+                        id="mainPassengerName"
+                        {...register('mainPassenger.name')}
+                        placeholder="Enter full name"
+                        className="mt-1"
+                      />
+                      {errors.mainPassenger?.name && (
+                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.name.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="mainPassengerAge">Age *</Label>
+                      <Input
+                        id="mainPassengerAge"
+                        type="number"
+                        {...register('mainPassenger.age', { valueAsNumber: true })}
+                        placeholder="Enter age"
+                        className="mt-1"
+                      />
+                      {errors.mainPassenger?.age && (
+                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.age.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="mainPassengerGender">Gender *</Label>
+                      <Select onValueChange={(value) => setValue('mainPassenger.gender', value as any)}>
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.mainPassenger?.gender && (
+                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.gender.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="mainPassengerMobile">Mobile Number *</Label>
+                      <Input
+                        id="mainPassengerMobile"
+                        {...register('mainPassenger.mobile')}
+                        placeholder="Enter 10-digit mobile number"
+                        className="mt-1"
+                      />
+                      {errors.mainPassenger?.mobile && (
+                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.mobile.message}</p>
+                      )}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <Label htmlFor="mainPassengerEmail">Email Address (Optional)</Label>
+                      <Input
+                        id="mainPassengerEmail"
+                        type="email"
+                        {...register('mainPassenger.email')}
+                        placeholder="Enter email address"
+                        className="mt-1"
+                      />
+                      {errors.mainPassenger?.email && (
+                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.email.message}</p>
+                      )}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
+              {/* Additional Passengers (Optional) */}
+              {additionalPassengers.length > 0 && (
+                <Card className="bg-white">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-primary" />
+                      Additional Passengers (Optional)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {additionalPassengers.map((_, index) => (
+                      <div key={index} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-medium text-gray-900">
+                            Additional Passenger {index + 1}
+                          </h3>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => removeAdditionalPassenger(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label>Full Name *</Label>
+                            <Input
+                              {...register(`additionalPassengers.${index}.name` as any)}
+                              placeholder="Enter full name"
+                              className="mt-1"
+                            />
+                          </div>
+
+                          <div>
+                            <Label>Age *</Label>
+                            <Input
+                              type="number"
+                              {...register(`additionalPassengers.${index}.age` as any, { valueAsNumber: true })}
+                              placeholder="Enter age"
+                              className="mt-1"
+                            />
+                          </div>
+
+                          <div>
+                            <Label>Gender *</Label>
+                            <Select onValueChange={(value) => setValue(`additionalPassengers.${index}.gender` as any, value)}>
+                              <SelectTrigger className="mt-1">
+                                <SelectValue placeholder="Select gender" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="male">Male</SelectItem>
+                                <SelectItem value="female">Female</SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label>Mobile Number *</Label>
+                            <Input
+                              {...register(`additionalPassengers.${index}.mobile` as any)}
+                              placeholder="Enter 10-digit mobile number"
+                              className="mt-1"
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <Label>Email Address (Optional)</Label>
+                            <Input
+                              type="email"
+                              {...register(`additionalPassengers.${index}.email` as any)}
+                              placeholder="Enter email address"
+                              className="mt-1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Add Additional Passenger Button */}
+              {additionalPassengers.length < 5 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addAdditionalPassenger}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Additional Passenger (Optional)
+                </Button>
+              )}
+
               <div className="flex justify-end">
-                <Button type="submit" className="btn-primary px-8">
-                  Continue to Payment
+                <Button type="submit" className="bg-primary text-white hover:bg-primary/90 px-8">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Confirm Booking
                 </Button>
               </div>
             </form>
@@ -303,64 +386,63 @@ const PassengerForm = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Route:</span>
-                  <span className="font-medium">Rajkot → Ahmedabad</span>
+                  <span className="text-gray-700">Route:</span>
+                  <span className="font-medium">{searchData.from} → {searchData.to}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Date:</span>
-                  <span className="font-medium">15 Dec 2024</span>
+                  <span className="text-gray-700">Date:</span>
+                  <span className="font-medium">{searchData.date?.toLocaleDateString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Departure:</span>
-                  <span className="font-medium">06:30 AM</span>
+                  <span className="text-gray-700">Departure:</span>
+                  <span className="font-medium">{selectedBus?.departureTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Bus:</span>
-                  <span className="font-medium">Rajkot Express</span>
+                  <span className="text-gray-700">Bus:</span>
+                  <span className="font-medium">{selectedBus?.operator}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Seats:</span>
-                  <div className="flex gap-1">
-                    {selectedSeats.map(seat => (
-                      <Badge key={seat} variant="secondary">{seat}</Badge>
-                    ))}
-                  </div>
+                  <span className="text-gray-700">Seat:</span>
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <Bed className="h-3 w-3" />
+                    {selectedSeat}
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Price Breakdown */}
+            {/* Price Details */}
             <Card className="bg-white">
               <CardHeader>
                 <CardTitle>Price Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Base Fare:</span>
-                  <span>₹{totalAmount - 50}</span>
+                  <span className="text-gray-700">Base Fare:</span>
+                  <span>₹{selectedBus?.price || 1450}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Service Tax:</span>
+                  <span className="text-gray-700">Service Tax:</span>
                   <span>₹50</span>
                 </div>
-                <hr className="border-warmBrown-200" />
+                <hr className="border-gray-200" />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total Amount:</span>
-                  <span className="text-warmBrown-600">₹{totalAmount}</span>
+                  <span className="text-primary">₹{(selectedBus?.price || 1450) + 50}</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Important Notes */}
-            <Card className="bg-warmBrown-50">
+            <Card className="bg-primary/5">
               <CardHeader>
                 <CardTitle className="text-sm">Important Notes</CardTitle>
               </CardHeader>
               <CardContent className="text-sm space-y-2">
                 <p>• Please carry a valid ID proof during travel</p>
                 <p>• Arrive at pickup point 15 minutes before departure</p>
+                <p>• E-ticket will be sent via WhatsApp</p>
                 <p>• Cancellation charges apply as per policy</p>
-                <p>• Bus departure time may vary ±15 minutes</p>
               </CardContent>
             </Card>
           </div>

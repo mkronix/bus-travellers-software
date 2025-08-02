@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ArrowLeft, User, UserX, Crown, Zap } from 'lucide-react';
+import { ArrowLeft, User, UserX, Bed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,64 +8,82 @@ import { Badge } from '@/components/ui/badge';
 interface Seat {
   id: string;
   row: number;
-  column: number;
-  type: 'window' | 'aisle' | 'middle';
-  status: 'available' | 'booked' | 'selected' | 'blocked';
-  gender?: 'male' | 'female';
+  position: 'left' | 'right-1' | 'right-2';
+  level: 'upper' | 'lower';
+  status: 'available' | 'booked' | 'selected';
   price: number;
 }
 
-const SeatSelection = () => {
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const [passengers, setPassengers] = useState(2);
+interface SeatSelectionProps {
+  selectedBus: any;
+  searchData: any;
+  onSeatSelect: (seatId: string) => void;
+  onBackToResults: () => void;
+}
 
-  // Generate seat layout for a 2x2 bus configuration
+const SeatSelection = ({ selectedBus, searchData, onSeatSelect, onBackToResults }: SeatSelectionProps) => {
+  const [selectedSeat, setSelectedSeat] = useState<string>('');
+
+  // Generate sleeper bus seat layout - 12 rows
   const generateSeats = (): Seat[] => {
     const seats: Seat[] = [];
     const rows = 12;
-    const seatPrices = { front: 500, middle: 450, back: 400 };
 
     for (let row = 1; row <= rows; row++) {
-      // Left side seats (A, B)
+      // Left side - 1 sofa seat (upper and lower)
       seats.push({
-        id: `${row}A`,
+        id: `${row}L-U`,
         row,
-        column: 1,
-        type: 'window',
+        position: 'left',
+        level: 'upper',
         status: Math.random() > 0.7 ? 'booked' : 'available',
-        price: row <= 3 ? seatPrices.front : row <= 8 ? seatPrices.middle : seatPrices.back,
-        gender: Math.random() > 0.5 ? 'male' : 'female'
+        price: selectedBus?.price || 1450,
       });
 
       seats.push({
-        id: `${row}B`,
+        id: `${row}L-L`,
         row,
-        column: 2,
-        type: 'aisle',
+        position: 'left',
+        level: 'lower',
         status: Math.random() > 0.7 ? 'booked' : 'available',
-        price: row <= 3 ? seatPrices.front : row <= 8 ? seatPrices.middle : seatPrices.back,
-        gender: Math.random() > 0.5 ? 'male' : 'female'
+        price: selectedBus?.price || 1450,
       });
 
-      // Right side seats (C, D)
+      // Right side - 2 sofa seats (upper and lower each)
       seats.push({
-        id: `${row}C`,
+        id: `${row}R1-U`,
         row,
-        column: 3,
-        type: 'aisle',
+        position: 'right-1',
+        level: 'upper',
         status: Math.random() > 0.7 ? 'booked' : 'available',
-        price: row <= 3 ? seatPrices.front : row <= 8 ? seatPrices.middle : seatPrices.back,
-        gender: Math.random() > 0.5 ? 'male' : 'female'
+        price: selectedBus?.price || 1450,
       });
 
       seats.push({
-        id: `${row}D`,
+        id: `${row}R1-L`,
         row,
-        column: 4,
-        type: 'window',
+        position: 'right-1',
+        level: 'lower',
         status: Math.random() > 0.7 ? 'booked' : 'available',
-        price: row <= 3 ? seatPrices.front : row <= 8 ? seatPrices.middle : seatPrices.back,
-        gender: Math.random() > 0.5 ? 'male' : 'female'
+        price: selectedBus?.price || 1450,
+      });
+
+      seats.push({
+        id: `${row}R2-U`,
+        row,
+        position: 'right-2',
+        level: 'upper',
+        status: Math.random() > 0.7 ? 'booked' : 'available',
+        price: selectedBus?.price || 1450,
+      });
+
+      seats.push({
+        id: `${row}R2-L`,
+        row,
+        position: 'right-2',
+        level: 'lower',
+        status: Math.random() > 0.7 ? 'booked' : 'available',
+        price: selectedBus?.price || 1450,
       });
     }
 
@@ -78,56 +96,47 @@ const SeatSelection = () => {
     const seat = seats.find(s => s.id === seatId);
     if (!seat || seat.status === 'booked') return;
 
-    if (selectedSeats.includes(seatId)) {
-      setSelectedSeats(selectedSeats.filter(id => id !== seatId));
-    } else if (selectedSeats.length < passengers) {
-      setSelectedSeats([...selectedSeats, seatId]);
+    if (selectedSeat === seatId) {
+      setSelectedSeat('');
+    } else {
+      setSelectedSeat(seatId);
     }
   };
 
   const getSeatStyle = (seat: Seat) => {
-    const baseClasses = "w-12 h-12 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all duration-200 text-sm font-medium";
+    const baseClasses = "w-16 h-8 rounded border-2 flex items-center justify-center cursor-pointer transition-all duration-200 text-xs font-medium relative";
     
     if (seat.status === 'booked') {
       return `${baseClasses} bg-gray-300 border-gray-400 cursor-not-allowed text-gray-600`;
     }
     
-    if (selectedSeats.includes(seat.id)) {
-      return `${baseClasses} bg-warmBrown-500 border-warmBrown-600 text-white shadow-lg scale-105`;
+    if (selectedSeat === seat.id) {
+      return `${baseClasses} bg-primary border-primary text-white shadow-lg scale-105`;
     }
     
     if (seat.status === 'available') {
-      const priceStyle = seat.price >= 500 ? 'bg-green-100 border-green-300 text-green-800' : 
-                        seat.price >= 450 ? 'bg-blue-100 border-blue-300 text-blue-800' : 
-                        'bg-orange-100 border-orange-300 text-orange-800';
-      return `${baseClasses} ${priceStyle} hover:scale-105 hover:shadow-md`;
+      return `${baseClasses} bg-green-100 border-green-300 text-green-800 hover:scale-105 hover:shadow-md`;
     }
     
     return baseClasses;
   };
 
-  const getTotalPrice = () => {
-    return selectedSeats.reduce((total, seatId) => {
-      const seat = seats.find(s => s.id === seatId);
-      return total + (seat?.price || 0);
-    }, 0);
-  };
-
   const availableSeats = seats.filter(seat => seat.status === 'available').length;
   const bookedSeats = seats.filter(seat => seat.status === 'booked').length;
+  const selectedSeatDetails = seats.find(s => s.id === selectedSeat);
 
   return (
-    <div className="min-h-screen bg-cream-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-warmBrown-200 py-4">
+      <div className="bg-white border-b border-gray-200 py-4">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="p-2">
+            <Button variant="ghost" onClick={onBackToResults} className="p-2">
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-browning-900">Select Seats</h1>
-              <p className="text-browning-700">Rajkot → Ahmedabad • Rajkot Express • AC Sleeper</p>
+              <h1 className="text-xl font-bold text-gray-900">Select Your Seat</h1>
+              <p className="text-gray-700">{searchData.from} → {searchData.to} • {selectedBus?.operator} • {selectedBus?.busType}</p>
             </div>
           </div>
         </div>
@@ -140,89 +149,120 @@ const SeatSelection = () => {
             <Card className="bg-white">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>Choose Your Seats</span>
+                  <span>Choose Your Seat</span>
                   <Badge variant="outline" className="text-sm">
-                    {selectedSeats.length} / {passengers} selected
+                    {selectedSeat ? '1 seat selected' : 'No seat selected'}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {/* Legend */}
-                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-cream-100 rounded-lg">
+                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-gray-100 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-green-100 border-2 border-green-300 rounded"></div>
-                    <span className="text-sm">Available (₹500)</span>
+                    <div className="w-4 h-2 bg-green-100 border-2 border-green-300 rounded"></div>
+                    <span className="text-sm">Available</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-blue-100 border-2 border-blue-300 rounded"></div>
-                    <span className="text-sm">Available (₹450)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-orange-100 border-2 border-orange-300 rounded"></div>
-                    <span className="text-sm">Available (₹400)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-warmBrown-500 border-2 border-warmBrown-600 rounded"></div>
+                    <div className="w-4 h-2 bg-primary border-2 border-primary rounded"></div>
                     <span className="text-sm">Selected</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-300 border-2 border-gray-400 rounded"></div>
+                    <div className="w-4 h-2 bg-gray-300 border-2 border-gray-400 rounded"></div>
                     <span className="text-sm">Booked</span>
                   </div>
                 </div>
 
                 {/* Driver Section */}
                 <div className="flex justify-end mb-4">
-                  <div className="bg-warmBrown-200 px-4 py-2 rounded-lg">
-                    <span className="text-sm font-medium text-browning-900">Driver</span>
+                  <div className="bg-primary/20 px-4 py-2 rounded-lg">
+                    <span className="text-sm font-medium text-gray-900">Driver</span>
                   </div>
                 </div>
 
-                {/* Seat Grid */}
-                <div className="space-y-2">
+                {/* Seat Grid - Sleeper Layout */}
+                <div className="space-y-3">
                   {Array.from({ length: 12 }, (_, rowIndex) => {
                     const rowSeats = seats.filter(seat => seat.row === rowIndex + 1);
+                    const leftSeats = rowSeats.filter(s => s.position === 'left');
+                    const right1Seats = rowSeats.filter(s => s.position === 'right-1');
+                    const right2Seats = rowSeats.filter(s => s.position === 'right-2');
+                    
                     return (
-                      <div key={rowIndex + 1} className="flex justify-center gap-8">
-                        {/* Left side */}
-                        <div className="flex gap-2">
-                          {rowSeats.slice(0, 2).map(seat => (
+                      <div key={rowIndex + 1} className="flex justify-center gap-8 items-center">
+                        {/* Left side - 1 sofa seat */}
+                        <div className="flex flex-col gap-1">
+                          <div className="text-xs text-center text-gray-500 mb-1">Row {rowIndex + 1}</div>
+                          {leftSeats.map(seat => (
                             <div
                               key={seat.id}
                               className={getSeatStyle(seat)}
                               onClick={() => handleSeatClick(seat.id)}
+                              title={`${seat.id} - ${seat.level} - ₹${seat.price}`}
                             >
                               {seat.status === 'booked' ? (
-                                <UserX className="h-4 w-4" />
-                              ) : selectedSeats.includes(seat.id) ? (
-                                <User className="h-4 w-4" />
+                                <UserX className="h-3 w-3" />
+                              ) : selectedSeat === seat.id ? (
+                                <User className="h-3 w-3" />
                               ) : (
-                                <span>{seat.id}</span>
+                                <Bed className="h-3 w-3" />
                               )}
+                              <span className="absolute -bottom-4 text-xs">
+                                {seat.level === 'upper' ? 'U' : 'L'}
+                              </span>
                             </div>
                           ))}
                         </div>
 
                         {/* Aisle */}
-                        <div className="w-8"></div>
+                        <div className="w-12 text-center text-xs text-gray-400">
+                          Aisle
+                        </div>
 
-                        {/* Right side */}
-                        <div className="flex gap-2">
-                          {rowSeats.slice(2, 4).map(seat => (
-                            <div
-                              key={seat.id}
-                              className={getSeatStyle(seat)}
-                              onClick={() => handleSeatClick(seat.id)}
-                            >
-                              {seat.status === 'booked' ? (
-                                <UserX className="h-4 w-4" />
-                              ) : selectedSeats.includes(seat.id) ? (
-                                <User className="h-4 w-4" />
-                              ) : (
-                                <span>{seat.id}</span>
-                              )}
-                            </div>
-                          ))}
+                        {/* Right side - 2 sofa seats */}
+                        <div className="flex gap-4">
+                          <div className="flex flex-col gap-1">
+                            {right1Seats.map(seat => (
+                              <div
+                                key={seat.id}
+                                className={getSeatStyle(seat)}
+                                onClick={() => handleSeatClick(seat.id)}
+                                title={`${seat.id} - ${seat.level} - ₹${seat.price}`}
+                              >
+                                {seat.status === 'booked' ? (
+                                  <UserX className="h-3 w-3" />
+                                ) : selectedSeat === seat.id ? (
+                                  <User className="h-3 w-3" />
+                                ) : (
+                                  <Bed className="h-3 w-3" />
+                                )}
+                                <span className="absolute -bottom-4 text-xs">
+                                  {seat.level === 'upper' ? 'U' : 'L'}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="flex flex-col gap-1">
+                            {right2Seats.map(seat => (
+                              <div
+                                key={seat.id}
+                                className={getSeatStyle(seat)}
+                                onClick={() => handleSeatClick(seat.id)}
+                                title={`${seat.id} - ${seat.level} - ₹${seat.price}`}
+                              >
+                                {seat.status === 'booked' ? (
+                                  <UserX className="h-3 w-3" />
+                                ) : selectedSeat === seat.id ? (
+                                  <User className="h-3 w-3" />
+                                ) : (
+                                  <Bed className="h-3 w-3" />
+                                )}
+                                <span className="absolute -bottom-4 text-xs">
+                                  {seat.level === 'upper' ? 'U' : 'L'}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     );
@@ -241,20 +281,20 @@ const SeatSelection = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Route:</span>
-                  <span className="font-medium">Rajkot → Ahmedabad</span>
+                  <span className="text-gray-700">Route:</span>
+                  <span className="font-medium">{searchData.from} → {searchData.to}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Date:</span>
-                  <span className="font-medium">15 Dec 2024</span>
+                  <span className="text-gray-700">Date:</span>
+                  <span className="font-medium">{searchData.date?.toLocaleDateString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Departure:</span>
-                  <span className="font-medium">06:30 AM</span>
+                  <span className="text-gray-700">Departure:</span>
+                  <span className="font-medium">{selectedBus?.departureTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-browning-700">Bus Type:</span>
-                  <span className="font-medium">AC Sleeper</span>
+                  <span className="text-gray-700">Bus Type:</span>
+                  <span className="font-medium">{selectedBus?.busType}</span>
                 </div>
               </CardContent>
             </Card>
@@ -268,58 +308,52 @@ const SeatSelection = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-green-600">{availableSeats}</p>
-                    <p className="text-sm text-browning-700">Available</p>
+                    <p className="text-sm text-gray-700">Available</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-red-600">{bookedSeats}</p>
-                    <p className="text-sm text-browning-700">Booked</p>
+                    <p className="text-sm text-gray-700">Booked</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Selected Seats & Price */}
-            {selectedSeats.length > 0 && (
+            {/* Selected Seat & Price */}
+            {selectedSeat && selectedSeatDetails && (
               <Card className="bg-white">
                 <CardHeader>
-                  <CardTitle>Selected Seats</CardTitle>
+                  <CardTitle>Selected Seat</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      {selectedSeats.map(seatId => {
-                        const seat = seats.find(s => s.id === seatId);
-                        return (
-                          <Badge key={seatId} variant="secondary" className="flex items-center gap-1">
-                            {seatId}
-                            {seat?.type === 'window' && <Crown className="h-3 w-3" />}
-                            <span>₹{seat?.price}</span>
-                          </Badge>
-                        );
-                      })}
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">Seat {selectedSeat}</span>
+                      <Badge variant="secondary">{selectedSeatDetails.level} Berth</Badge>
                     </div>
                     
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center mb-4">
                         <span className="text-lg font-medium">Total Amount:</span>
-                        <span className="text-2xl font-bold text-warmBrown-600">₹{getTotalPrice()}</span>
+                        <span className="text-2xl font-bold text-primary">₹{selectedSeatDetails.price}</span>
                       </div>
                       
                       <Button 
-                        className="btn-primary w-full"
-                        disabled={selectedSeats.length !== passengers}
+                        className="bg-primary text-white hover:bg-primary/90 w-full"
+                        onClick={() => onSeatSelect(selectedSeat)}
                       >
-                        <Zap className="h-4 w-4 mr-2" />
                         Continue to Passenger Details
                       </Button>
-                      
-                      {selectedSeats.length < passengers && (
-                        <p className="text-sm text-browning-600 text-center mt-2">
-                          Please select {passengers - selectedSeats.length} more seat(s)
-                        </p>
-                      )}
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {!selectedSeat && (
+              <Card className="bg-gray-50">
+                <CardContent className="text-center py-8">
+                  <Bed className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">Please select a seat to continue</p>
                 </CardContent>
               </Card>
             )}

@@ -1,24 +1,26 @@
-import PassengerForm from '@/components/PassengerForm';
-import SearchResults from '@/components/SearchResults';
-import SeatSelection from '@/components/SeatSelection';
-import { Autocomplete } from '@/components/ui/autocomplete';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Autocomplete } from '@/components/ui/autocomplete';
 import { GUJARATI_CITIES } from '@/data/cities';
 import { ArrowRight, Award, Bus, Calendar, HeartHandshake, Mail, MapPin, Phone, Shield, UserPlus, Users } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import SearchResults from '@/components/SearchResults';
+import SeatSelection from '@/components/SeatSelection';
+import PassengerForm from '@/components/PassengerForm';
 
 const Index = () => {
+  const [currentStep, setCurrentStep] = useState<'search' | 'results' | 'seat' | 'passenger'>('search');
   const [searchData, setSearchData] = useState({
     from: '',
     to: '',
     date: undefined as Date | undefined,
     passengers: 1
   });
-
-  const [showPassengerForm, setShowPassengerForm] = useState(false);
+  const [selectedBus, setSelectedBus] = useState<any>(null);
+  const [selectedSeat, setSelectedSeat] = useState<string>('');
 
   const handleContinueBooking = () => {
     if (!searchData.from || !searchData.to || !searchData.date) {
@@ -29,9 +31,60 @@ const Index = () => {
       toast.error('🔄 From and To cities cannot be the same');
       return;
     }
-    setShowPassengerForm(true);
+    setCurrentStep('results');
   };
 
+  const handleBusSelection = (bus: any) => {
+    setSelectedBus(bus);
+    setCurrentStep('seat');
+  };
+
+  const handleSeatSelection = (seatId: string) => {
+    setSelectedSeat(seatId);
+    setCurrentStep('passenger');
+  };
+
+  const handleBackToSearch = () => {
+    setCurrentStep('search');
+    setSelectedBus(null);
+    setSelectedSeat('');
+  };
+
+  const handleBackToResults = () => {
+    setCurrentStep('results');
+    setSelectedSeat('');
+  };
+
+  const handleBackToSeat = () => {
+    setCurrentStep('seat');
+  };
+
+  // Show different components based on current step
+  if (currentStep === 'results') {
+    return <SearchResults 
+      searchData={searchData} 
+      onBusSelect={handleBusSelection}
+      onBackToSearch={handleBackToSearch}
+    />;
+  }
+
+  if (currentStep === 'seat') {
+    return <SeatSelection 
+      selectedBus={selectedBus}
+      searchData={searchData}
+      onSeatSelect={handleSeatSelection}
+      onBackToResults={handleBackToResults}
+    />;
+  }
+
+  if (currentStep === 'passenger') {
+    return <PassengerForm 
+      selectedBus={selectedBus}
+      selectedSeat={selectedSeat}
+      searchData={searchData}
+      onBackToSeat={handleBackToSeat}
+    />;
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -119,53 +172,19 @@ const Index = () => {
                 />
               </div>
 
-              <div className="flex justify-between items-center mt-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Passengers:</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSearchData({ ...searchData, passengers: Math.max(1, searchData.passengers - 1) })}
-                      disabled={searchData.passengers <= 1}
-                      className="h-8 w-8 p-0"
-                    >
-                      -
-                    </Button>
-                    <span className="font-semibold text-lg px-4">{searchData.passengers}</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSearchData({ ...searchData, passengers: Math.min(6, searchData.passengers + 1) })}
-                      disabled={searchData.passengers >= 6}
-                      className="h-8 w-8 p-0"
-                    >
-                      +
-                    </Button>
-                  </div>
-                </div>
-
+              <div className="flex justify-center mt-6">
                 <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-8"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-12 py-3 text-lg"
                   onClick={handleContinueBooking}
                 >
-                  <UserPlus className="h-5 w-5 mr-2" />
+                  <ArrowRight className="h-5 w-5 mr-2" />
                   Continue Booking
                 </Button>
               </div>
             </CardContent>
           </Card>
-
-
         </div>
       </section>
-
-      <SearchResults />
-      <SeatSelection />
-      <PassengerForm />
 
       {/* Features Section */}
       <section className="py-16 bg-white">
