@@ -1,16 +1,29 @@
-
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { ArrowLeft, Plus, Trash2, User, Mail, Phone, Bed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import toast from 'react-hot-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowLeft,
+  Bed,
+  Bus,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Info,
+  MapPin,
+  Phone,
+  Plus,
+  Shield,
+  Trash2,
+  User
+} from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const passengerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -41,6 +54,8 @@ interface PassengerFormProps {
 
 const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: PassengerFormProps) => {
   const [additionalPassengers, setAdditionalPassengers] = useState<any[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const {
     register,
@@ -67,14 +82,21 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     console.log('Booking confirmed:', {
       ...data,
       selectedBus,
       selectedSeat,
       searchData,
     });
-    toast.success('🎫 Booking confirmed! E-ticket will be sent via WhatsApp');
+
+    setIsSubmitting(false);
+    setShowSuccessModal(true);
   };
 
   const copyContactToMainPassenger = () => {
@@ -83,7 +105,8 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
       setValue('mainPassenger.name', contactPerson.name);
       setValue('mainPassenger.mobile', contactPerson.mobile);
       setValue('mainPassenger.email', contactPerson.email || '');
-      toast.success('Contact details copied to main passenger');
+      // You can replace this with your toast system
+      alert('Contact details copied to main passenger');
     }
   };
 
@@ -97,356 +120,507 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
     setAdditionalPassengers(additionalPassengers.filter((_, i) => i !== index));
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24
+      }
+    }
+  };
+
+  const formVariants = {
+    hidden: { x: -20, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
+              >
+                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              </motion.div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h2>
+              <p className="text-gray-700 mb-6">Your bus ticket has been booked successfully. E-ticket will be sent via WhatsApp.</p>
+              <Button
+                onClick={() => setShowSuccessModal(false)}
+                className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-2.5 rounded-xl"
+              >
+                Continue
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 py-4">
+      <motion.div
+        className="bg-white/90 backdrop-blur-md border-b border-gray-200 py-4 sticky top-0 z-40 shadow-sm"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={onBackToSeat} className="p-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
+            <motion.button
+              onClick={onBackToSeat}
+              className="p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-600" />
+            </motion.button>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Passenger Details</h1>
-              <p className="text-gray-700">Enter passenger information for your booking</p>
+              <motion.h1
+                className="text-lg md:text-xl font-bold text-gray-900"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Passenger Details
+              </motion.h1>
+              <motion.p
+                className="text-gray-700 text-xs md:text-sm"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                Enter passenger information for your booking
+              </motion.p>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Passenger Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Contact Person */}
-              <Card className="bg-white">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-primary" />
-                    Contact Person Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="contactName">Full Name *</Label>
-                      <Input
-                        id="contactName"
-                        {...register('contactPerson.name')}
-                        placeholder="Enter full name"
-                        className="mt-1"
-                      />
-                      {errors.contactPerson?.name && (
-                        <p className="text-sm text-red-600 mt-1">{errors.contactPerson.name.message}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="contactMobile">Mobile Number *</Label>
-                      <Input
-                        id="contactMobile"
-                        {...register('contactPerson.mobile')}
-                        placeholder="Enter 10-digit mobile number"
-                        className="mt-1"
-                      />
-                      {errors.contactPerson?.mobile && (
-                        <p className="text-sm text-red-600 mt-1">{errors.contactPerson.mobile.message}</p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="contactEmail">Email Address *</Label>
-                    <Input
-                      id="contactEmail"
-                      type="email"
-                      {...register('contactPerson.email')}
-                      placeholder="Enter email address"
-                      className="mt-1"
-                    />
-                    {errors.contactPerson?.email && (
-                      <p className="text-sm text-red-600 mt-1">{errors.contactPerson.email.message}</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Main Passenger */}
-              <Card className="bg-white">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-primary" />
-                      Main Passenger Details
-                    </span>
-                    <Badge variant="secondary">Seat {selectedSeat}</Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-end mb-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={copyContactToMainPassenger}
-                    >
-                      Copy Contact Details
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="mainPassengerName">Full Name *</Label>
-                      <Input
-                        id="mainPassengerName"
-                        {...register('mainPassenger.name')}
-                        placeholder="Enter full name"
-                        className="mt-1"
-                      />
-                      {errors.mainPassenger?.name && (
-                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.name.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label htmlFor="mainPassengerAge">Age *</Label>
-                      <Input
-                        id="mainPassengerAge"
-                        type="number"
-                        {...register('mainPassenger.age', { valueAsNumber: true })}
-                        placeholder="Enter age"
-                        className="mt-1"
-                      />
-                      {errors.mainPassenger?.age && (
-                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.age.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label htmlFor="mainPassengerGender">Gender *</Label>
-                      <Select onValueChange={(value) => setValue('mainPassenger.gender', value as any)}>
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Select gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {errors.mainPassenger?.gender && (
-                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.gender.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label htmlFor="mainPassengerMobile">Mobile Number *</Label>
-                      <Input
-                        id="mainPassengerMobile"
-                        {...register('mainPassenger.mobile')}
-                        placeholder="Enter 10-digit mobile number"
-                        className="mt-1"
-                      />
-                      {errors.mainPassenger?.mobile && (
-                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.mobile.message}</p>
-                      )}
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <Label htmlFor="mainPassengerEmail">Email Address (Optional)</Label>
-                      <Input
-                        id="mainPassengerEmail"
-                        type="email"
-                        {...register('mainPassenger.email')}
-                        placeholder="Enter email address"
-                        className="mt-1"
-                      />
-                      {errors.mainPassenger?.email && (
-                        <p className="text-sm text-red-600 mt-1">{errors.mainPassenger.email.message}</p>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Additional Passengers (Optional) */}
-              {additionalPassengers.length > 0 && (
-                <Card className="bg-white">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-primary" />
-                      Additional Passengers (Optional)
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Phone className="h-5 w-5 text-primary" />
+                      Contact Person Details
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    {additionalPassengers.map((_, index) => (
-                      <div key={index} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            Additional Passenger {index + 1}
-                          </h3>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => removeAdditionalPassenger(index)}
+                  <CardContent className="p-4 md:p-6 space-y-4">
+                    <motion.div
+                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                      variants={formVariants}
+                    >
+                      <div>
+                        <Label htmlFor="contactName" className="text-sm font-semibold text-gray-700">Full Name *</Label>
+                        <Input
+                          id="contactName"
+                          {...register('contactPerson.name')}
+                          placeholder="Enter full name"
+                          className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                        />
+                        {errors.contactPerson?.name && (
+                          <motion.p
+                            className="text-sm text-red-600 mt-1 flex items-center gap-1"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
                           >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label>Full Name *</Label>
-                            <Input
-                              {...register(`additionalPassengers.${index}.name` as any)}
-                              placeholder="Enter full name"
-                              className="mt-1"
-                            />
-                          </div>
-
-                          <div>
-                            <Label>Age *</Label>
-                            <Input
-                              type="number"
-                              {...register(`additionalPassengers.${index}.age` as any, { valueAsNumber: true })}
-                              placeholder="Enter age"
-                              className="mt-1"
-                            />
-                          </div>
-
-                          <div>
-                            <Label>Gender *</Label>
-                            <Select onValueChange={(value) => setValue(`additionalPassengers.${index}.gender` as any, value)}>
-                              <SelectTrigger className="mt-1">
-                                <SelectValue placeholder="Select gender" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="male">Male</SelectItem>
-                                <SelectItem value="female">Female</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div>
-                            <Label>Mobile Number *</Label>
-                            <Input
-                              {...register(`additionalPassengers.${index}.mobile` as any)}
-                              placeholder="Enter 10-digit mobile number"
-                              className="mt-1"
-                            />
-                          </div>
-
-                          <div className="md:col-span-2">
-                            <Label>Email Address (Optional)</Label>
-                            <Input
-                              type="email"
-                              {...register(`additionalPassengers.${index}.email` as any)}
-                              placeholder="Enter email address"
-                              className="mt-1"
-                            />
-                          </div>
-                        </div>
+                            <Info className="h-3 w-3" />
+                            {errors.contactPerson.name.message}
+                          </motion.p>
+                        )}
                       </div>
-                    ))}
+
+                      <div>
+                        <Label htmlFor="mainPassengerAge" className="text-sm font-semibold text-gray-700">Age *</Label>
+                        <Input
+                          id="mainPassengerAge"
+                          type="number"
+                          {...register('mainPassenger.age', { valueAsNumber: true })}
+                          placeholder="Enter age"
+                          className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                        />
+                        {errors.mainPassenger?.age && (
+                          <motion.p
+                            className="text-sm text-red-600 mt-1 flex items-center gap-1"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                          >
+                            <Info className="h-3 w-3" />
+                            {errors.mainPassenger.age.message}
+                          </motion.p>
+                        )}
+                      </div>
+
+                      <div>
+                        <Label htmlFor="mainPassengerGender" className="text-sm font-semibold text-gray-700">Gender *</Label>
+                        <Select onValueChange={(value) => setValue('mainPassenger.gender', value as any)}>
+                          <SelectTrigger className="mt-2 h-12 border-2 rounded-xl focus:border-primary">
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {errors.mainPassenger?.gender && (
+                          <motion.p
+                            className="text-sm text-red-600 mt-1 flex items-center gap-1"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                          >
+                            <Info className="h-3 w-3" />
+                            {errors.mainPassenger.gender.message}
+                          </motion.p>
+                        )}
+                      </div>
+
+                      <div>
+                        <Label htmlFor="mainPassengerMobile" className="text-sm font-semibold text-gray-700">Mobile Number *</Label>
+                        <Input
+                          id="mainPassengerMobile"
+                          {...register('mainPassenger.mobile')}
+                          placeholder="Enter 10-digit mobile number"
+                          className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                        />
+                        {errors.mainPassenger?.mobile && (
+                          <motion.p
+                            className="text-sm text-red-600 mt-1 flex items-center gap-1"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                          >
+                            <Info className="h-3 w-3" />
+                            {errors.mainPassenger.mobile.message}
+                          </motion.p>
+                        )}
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <Label htmlFor="mainPassengerEmail" className="text-sm font-semibold text-gray-700">Email Address (Optional)</Label>
+                        <Input
+                          id="mainPassengerEmail"
+                          type="email"
+                          {...register('mainPassenger.email')}
+                          placeholder="Enter email address"
+                          className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                        />
+                        {errors.mainPassenger?.email && (
+                          <motion.p
+                            className="text-sm text-red-600 mt-1 flex items-center gap-1"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                          >
+                            <Info className="h-3 w-3" />
+                            {errors.mainPassenger.email.message}
+                          </motion.p>
+                        )}
+                      </div>
+                    </motion.div>
                   </CardContent>
                 </Card>
-              )}
+              </motion.div>
+
+              {/* Additional Passengers */}
+              <AnimatePresence>
+                {additionalPassengers.length > 0 && (
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                  >
+                    <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+                      <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <User className="h-5 w-5 text-primary" />
+                          Additional Passengers (Optional)
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-4 md:p-6 space-y-6">
+                        <AnimatePresence>
+                          {additionalPassengers.map((_, index) => (
+                            <motion.div
+                              key={index}
+                              className="border border-gray-200 rounded-xl p-4 bg-gray-50"
+                              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            >
+                              <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                  Additional Passenger {index + 1}
+                                </h3>
+                                <motion.button
+                                  type="button"
+                                  onClick={() => removeAdditionalPassenger(index)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </motion.button>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label className="text-sm font-semibold text-gray-700">Full Name *</Label>
+                                  <Input
+                                    {...register(`additionalPassengers.${index}.name` as any)}
+                                    placeholder="Enter full name"
+                                    className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                                  />
+                                </div>
+
+                                <div>
+                                  <Label className="text-sm font-semibold text-gray-700">Age *</Label>
+                                  <Input
+                                    type="number"
+                                    {...register(`additionalPassengers.${index}.age` as any, { valueAsNumber: true })}
+                                    placeholder="Enter age"
+                                    className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                                  />
+                                </div>
+
+                                <div>
+                                  <Label className="text-sm font-semibold text-gray-700">Gender *</Label>
+                                  <Select onValueChange={(value) => setValue(`additionalPassengers.${index}.gender` as any, value)}>
+                                    <SelectTrigger className="mt-2 h-12 border-2 rounded-xl focus:border-primary">
+                                      <SelectValue placeholder="Select gender" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="male">Male</SelectItem>
+                                      <SelectItem value="female">Female</SelectItem>
+                                      <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <div>
+                                  <Label className="text-sm font-semibold text-gray-700">Mobile Number *</Label>
+                                  <Input
+                                    {...register(`additionalPassengers.${index}.mobile` as any)}
+                                    placeholder="Enter 10-digit mobile number"
+                                    className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                                  />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                  <Label className="text-sm font-semibold text-gray-700">Email Address (Optional)</Label>
+                                  <Input
+                                    type="email"
+                                    {...register(`additionalPassengers.${index}.email` as any)}
+                                    placeholder="Enter email address"
+                                    className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
+                                  />
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Add Additional Passenger Button */}
               {additionalPassengers.length < 5 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={addAdditionalPassenger}
-                  className="w-full"
+                <motion.div
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Additional Passenger (Optional)
-                </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addAdditionalPassenger}
+                    className="w-full h-12 border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 rounded-xl transition-all duration-300"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Additional Passenger (Optional)
+                  </Button>
+                </motion.div>
               )}
 
-              <div className="flex justify-end">
-                <Button type="submit" className="bg-primary text-white hover:bg-primary/90 px-8">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Confirm Booking
-                </Button>
-              </div>
+              {/* Submit Button */}
+              <motion.div
+                className="flex justify-end pt-6"
+                variants={itemVariants}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-gradient-to-r from-primary to-secondary text-white hover:shadow-xl px-8 py-3 rounded-xl font-semibold text-base relative overflow-hidden"
+                  >
+                    {isSubmitting && (
+                      <motion.div
+                        className="absolute inset-0 bg-white/20"
+                        animate={{ x: [-100, 300] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                      />
+                    )}
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    {isSubmitting ? 'Processing...' : 'Confirm Booking'}
+                  </Button>
+                </motion.div>
+              </motion.div>
             </form>
           </div>
 
           {/* Booking Summary */}
           <div className="space-y-6">
             {/* Trip Summary */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle>Booking Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Route:</span>
-                  <span className="font-medium">{searchData.from} → {searchData.to}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Date:</span>
-                  <span className="font-medium">{searchData.date?.toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Departure:</span>
-                  <span className="font-medium">{selectedBus?.departureTime}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Bus:</span>
-                  <span className="font-medium">{selectedBus?.operator}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Seat:</span>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Bed className="h-3 w-3" />
-                    {selectedSeat}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div variants={itemVariants}>
+              <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-primary to-secondary">
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Bus className="h-5 w-5" />
+                    Booking Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 md:p-6 space-y-4">
+                  {[
+                    { label: 'Route', value: `${searchData.from} → ${searchData.to}`, icon: MapPin },
+                    { label: 'Date', value: searchData.date?.toLocaleDateString(), icon: Calendar },
+                    { label: 'Departure', value: selectedBus?.departureTime, icon: Clock },
+                    { label: 'Bus', value: selectedBus?.operator, icon: Bus },
+                    { label: 'Seat', value: selectedSeat, icon: Bed }
+                  ].map((item, index) => (
+                    <motion.div
+                      key={item.label}
+                      className="flex justify-between items-center"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.8 + index * 0.1 }}
+                    >
+                      <span className="text-gray-700 flex items-center gap-2 text-sm">
+                        <item.icon className="h-4 w-4 text-gray-500" />
+                        {item.label}:
+                      </span>
+                      <span className="font-semibold text-gray-900 text-sm">{item.value}</span>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Price Details */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle>Price Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Base Fare:</span>
-                  <span>₹{selectedBus?.price || 1450}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Service Tax:</span>
-                  <span>₹50</span>
-                </div>
-                <hr className="border-gray-200" />
-                <div className="flex justify-between font-bold text-lg">
-                  <span>Total Amount:</span>
-                  <span className="text-primary">₹{(selectedBus?.price || 1450) + 50}</span>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div variants={itemVariants}>
+              <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <CreditCard className="h-5 w-5 text-green-600" />
+                    Price Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 md:p-6 space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Base Fare:</span>
+                    <span className="font-medium">₹{selectedBus?.price || 1450}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Service Tax:</span>
+                    <span className="font-medium">₹50</span>
+                  </div>
+                  <hr className="border-gray-200" />
+                  <motion.div
+                    className="flex justify-between font-bold text-lg"
+                    animate={{ scale: [1, 1.02, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <span>Total Amount:</span>
+                    <span className="text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      ₹{(selectedBus?.price || 1450) + 50}
+                    </span>
+                  </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Important Notes */}
-            <Card className="bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-sm">Important Notes</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm space-y-2">
-                <p>• Please carry a valid ID proof during travel</p>
-                <p>• Arrive at pickup point 15 minutes before departure</p>
-                <p>• E-ticket will be sent via WhatsApp</p>
-                <p>• Cancellation charges apply as per policy</p>
-              </CardContent>
-            </Card>
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-r from-amber-50 to-orange-50 shadow-lg border border-amber-200 rounded-2xl overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="text-amber-800 flex items-center gap-2 text-lg">
+                    <Shield className="h-5 w-5" />
+                    Important Notes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm space-y-3 text-amber-800 p-4 md:p-6">
+                  {[
+                    "Please carry a valid ID proof during travel",
+                    "Arrive at pickup point 15 minutes before departure",
+                    "E-ticket will be sent via WhatsApp",
+                    "Cancellation charges apply as per policy"
+                  ].map((note, index) => (
+                    <motion.div
+                      key={index}
+                      className="flex items-start gap-2"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.2 + index * 0.1 }}
+                    >
+                      <div className="w-1.5 h-1.5 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
+                      <span>{note}</span>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

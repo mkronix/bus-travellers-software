@@ -31,7 +31,7 @@ export function DatePicker({
           variant="outline"
           className={cn(
             "w-full h-12 border-2 border-gray-200 rounded-xl bg-white",
-            "focus:border-primary focus:ring-2 focus:ring-primary/20",
+            "focus:border-primary focus:ring-0 focus:ring-primary/20",
             "justify-start text-left font-normal hover:bg-gray-50",
             "transition-all duration-200",
             !selected && "text-muted-foreground",
