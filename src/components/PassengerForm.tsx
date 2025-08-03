@@ -136,7 +136,7 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 24
       }
@@ -149,7 +149,7 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
       x: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 30
       }
