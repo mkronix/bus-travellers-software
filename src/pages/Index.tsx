@@ -114,7 +114,7 @@ const Index = () => {
       selectedBus={selectedBus}
       searchData={searchData}
       onSeatSelect={handleSeatSelection}
-      onBackToResults={handleBackToResults}
+      onBackToSearch={handleBackToResults}
     />;
   }
 

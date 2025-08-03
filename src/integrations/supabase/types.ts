@@ -80,6 +80,101 @@ export type Database = {
         }
         Relationships: []
       }
+      buses: {
+        Row: {
+          base_price: number
+          bus_number: string
+          bus_type: string
+          created_at: string
+          driver_name: string
+          driver_phone: string
+          helper_name: string | null
+          helper_phone: string | null
+          id: string
+          images: Json | null
+          is_active: boolean | null
+          route_id: string | null
+          seating_type: string
+          total_seats: number
+          updated_at: string
+        }
+        Insert: {
+          base_price: number
+          bus_number: string
+          bus_type: string
+          created_at?: string
+          driver_name: string
+          driver_phone: string
+          helper_name?: string | null
+          helper_phone?: string | null
+          id?: string
+          images?: Json | null
+          is_active?: boolean | null
+          route_id?: string | null
+          seating_type: string
+          total_seats: number
+          updated_at?: string
+        }
+        Update: {
+          base_price?: number
+          bus_number?: string
+          bus_type?: string
+          created_at?: string
+          driver_name?: string
+          driver_phone?: string
+          helper_name?: string | null
+          helper_phone?: string | null
+          id?: string
+          images?: Json | null
+          is_active?: boolean | null
+          route_id?: string | null
+          seating_type?: string
+          total_seats?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buses_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string
+          contact_number: string | null
+          created_at: string
+          id: string
+          manager_id: string | null
+          name: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          contact_number?: string | null
+          created_at?: string
+          id?: string
+          manager_id?: string | null
+          name: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          contact_number?: string | null
+          created_at?: string
+          id?: string
+          manager_id?: string | null
+          name?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           boarding_points: string[] | null
@@ -113,6 +208,72 @@ export type Database = {
         }
         Relationships: []
       }
+      routes: {
+        Row: {
+          created_at: string
+          distance_km: number | null
+          duration_hours: number | null
+          end_location: string
+          id: string
+          is_active: boolean | null
+          name: string
+          start_location: string
+          stops: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          distance_km?: number | null
+          duration_hours?: number | null
+          end_location: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          start_location: string
+          stops?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          distance_km?: number | null
+          duration_hours?: number | null
+          end_location?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          start_location?: string
+          stops?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          permissions: Json | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          permissions?: Json | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          permissions?: Json | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -122,9 +283,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_user_role: {
+        Args: { user_uuid: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "superadmin" | "agent" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -251,6 +416,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["superadmin", "agent", "user"],
+    },
   },
 } as const

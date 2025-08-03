@@ -42,18 +42,19 @@ interface BusResult {
   droppingPoints: string[];
 }
 
-interface SearchResultsProps {
+interface SeatSelectionProps {
+  selectedBus: any;
   searchData: {
     from: string;
     to: string;
     date: Date | undefined;
     passengers: number;
   };
-  onBusSelect: (bus: BusResult) => void;
+  onSeatSelect: (seatId: string) => void;
   onBackToSearch: () => void;
 }
 
-const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResultsProps) => {
+const SeatSelection = ({ selectedBus, searchData, onSeatSelect, onBackToSearch }: SeatSelectionProps) => {
   const [sortBy, setSortBy] = useState('price');
   const [filterBy, setFilterBy] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
@@ -200,7 +201,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 24
       }
@@ -213,7 +214,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 30
       }
@@ -449,7 +450,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
                     >
                       <Button
                         className="bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg w-full py-2.5 rounded-xl font-semibold text-sm"
-                        onClick={() => onBusSelect(bus)}
+                        onClick={() => onSeatSelect(`seat-${bus.id}`)}
                       >
                         Select Seats
                         <ArrowRight className="h-4 w-4 ml-2" />
@@ -551,7 +552,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
                         >
                           <Button
                             className="bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg px-6 py-2.5 rounded-xl font-semibold"
-                            onClick={() => onBusSelect(bus)}
+                            onClick={() => onSeatSelect(`seat-${bus.id}`)}
                           >
                             Select Seats
                             <ArrowRight className="h-4 w-4 ml-2" />
@@ -652,4 +653,4 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
   );
 };
 
-export default SearchResults;
+export default SeatSelection;

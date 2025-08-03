@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { AdminProvider } from "@/hooks/useAdmin";
 import AuthLayout from "@/pages/auth/AuthLayout";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
@@ -15,6 +16,10 @@ import UpdatePasswordForm from "@/components/auth/UpdatePasswordForm";
 import Dashboard from "@/pages/Dashboard";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "@/pages/admin/AdminLayout";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminBookings from "@/pages/admin/AdminBookings";
+import AdminUsers from "@/pages/admin/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -23,28 +28,37 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
-          <HotToaster position="top-center" />
-          <Toaster />
-          <Sonner />
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            
-            {/* Auth routes */}
-            <Route path="/" element={<AuthLayout />}>
-              <Route path="login" element={<LoginForm />} />
-              <Route path="signup" element={<SignupForm />} />
-              <Route path="forgot-password" element={<ForgotPasswordForm />} />
-              <Route path="verify-otp" element={<VerifyOtpForm />} />
-              <Route path="update-password" element={<UpdatePasswordForm />} />
-            </Route>
+          <AdminProvider>
+            <HotToaster position="top-center" />
+            <Toaster />
+            <Sonner />
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Index />} />
+              
+              {/* Auth routes */}
+              <Route path="/" element={<AuthLayout />}>
+                <Route path="login" element={<LoginForm />} />
+                <Route path="signup" element={<SignupForm />} />
+                <Route path="forgot-password" element={<ForgotPasswordForm />} />
+                <Route path="verify-otp" element={<VerifyOtpForm />} />
+                <Route path="update-password" element={<UpdatePasswordForm />} />
+              </Route>
 
-            {/* Protected routes */}
-            <Route path="/dashboard" element={<Dashboard />} />
+              {/* Protected routes */}
+              <Route path="/dashboard" element={<Dashboard />} />
 
-            {/* Catch all routes */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* Admin routes */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="bookings" element={<AdminBookings />} />
+                <Route path="users" element={<AdminUsers />} />
+              </Route>
+
+              {/* Catch all routes */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AdminProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
