@@ -14,13 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          amount: number
+          arrival_time: string | null
+          boarding_point: string | null
+          booking_date: string
+          booking_status: string | null
+          bus_operator: string | null
+          created_at: string
+          departure_time: string | null
+          dropping_point: string | null
+          id: string
+          passenger_details: Json | null
+          payment_status: string | null
+          route_from: string
+          route_to: string
+          seat_number: string | null
+          transaction_id: string
+          travel_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          arrival_time?: string | null
+          boarding_point?: string | null
+          booking_date?: string
+          booking_status?: string | null
+          bus_operator?: string | null
+          created_at?: string
+          departure_time?: string | null
+          dropping_point?: string | null
+          id?: string
+          passenger_details?: Json | null
+          payment_status?: string | null
+          route_from: string
+          route_to: string
+          seat_number?: string | null
+          transaction_id: string
+          travel_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          arrival_time?: string | null
+          boarding_point?: string | null
+          booking_date?: string
+          booking_status?: string | null
+          bus_operator?: string | null
+          created_at?: string
+          departure_time?: string | null
+          dropping_point?: string | null
+          id?: string
+          passenger_details?: Json | null
+          payment_status?: string | null
+          route_from?: string
+          route_to?: string
+          seat_number?: string | null
+          transaction_id?: string
+          travel_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          boarding_points: string[] | null
+          created_at: string
+          dropping_points: string[] | null
+          email: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          boarding_points?: string[] | null
+          created_at?: string
+          dropping_points?: string[] | null
+          email: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          boarding_points?: string[] | null
+          created_at?: string
+          dropping_points?: string[] | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_transaction_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
