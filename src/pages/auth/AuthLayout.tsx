@@ -9,8 +9,8 @@ const AuthLayout = () => {
       <div className="min-h-screen bg-background">
         <div className="flex min-h-screen">
           {/* Left side - Auth forms */}
-          <div className="flex w-full flex-col justify-center px-4 sm:px-6 lg:flex-none lg:w-1/2 lg:px-20 xl:px-24">
-            <div className="mx-auto w-full max-w-sm lg:w-96">
+          <div className="flex w-full flex-col justify-center px-4 sm:px-6 lg:flex-none lg:w-1/2 lg:px-10 xl:px-12">
+            <div className="mx-auto w-full max-w-lg">
               <Outlet />
             </div>
           </div>

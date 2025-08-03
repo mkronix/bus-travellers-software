@@ -97,20 +97,20 @@ const LoginForm = ({ onSubmit, onGoogleSignIn, isLoading = false }: LoginFormPro
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+    <div className="flex items-center justify-center">
       <motion.div
-        className="w-full max-w-sm sm:max-w-md bg-white p-6 sm:p-8 space-y-6 sm:space-y-8"
+        className="w-full space-y-6 sm:space-y-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Header */}
-        <motion.div className="flex items-center justify-center gap-2" variants={itemVariants}>
+        <motion.div className="space-y-2" variants={itemVariants}>
           <div className='flex flex-col gap-2 items-start'>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
               Welcome back
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 max-w-sm mx-auto">
+            <p className="text-sm sm:text-base text-gray-600 ">
               Sign in to your account to continue your journey
             </p>
           </div>
@@ -238,7 +238,7 @@ const LoginForm = ({ onSubmit, onGoogleSignIn, isLoading = false }: LoginFormPro
           {/* Forgot Password Link */}
           <div className="flex justify-end">
             <a
-              href="#"
+              href="/forgot-password"
               className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               Forgot your password?
@@ -246,7 +246,7 @@ const LoginForm = ({ onSubmit, onGoogleSignIn, isLoading = false }: LoginFormPro
           </div>
 
           {/* Submit Buttons */}
-          <div className="space-y-3 sm:space-y-4">
+          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -266,18 +266,6 @@ const LoginForm = ({ onSubmit, onGoogleSignIn, isLoading = false }: LoginFormPro
                 )}
               </Button>
             </motion.div>
-
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-3 text-gray-500 font-medium">
-                  Or continue with
-                </span>
-              </div>
-            </div>
 
             {/* Google Sign In */}
             <motion.div
@@ -327,7 +315,7 @@ const LoginForm = ({ onSubmit, onGoogleSignIn, isLoading = false }: LoginFormPro
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <a
-                href="#"
+                href="/signup"
                 className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
               >
                 Sign up
