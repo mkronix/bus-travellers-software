@@ -110,6 +110,7 @@ const Index = () => {
   }
 
   if (currentStep === 'seat') {
+    console.log("selectedBus", selectedBus);
     return <SeatSelection
       selectedBus={selectedBus}
       searchData={searchData}
@@ -119,6 +120,7 @@ const Index = () => {
   }
 
   if (currentStep === 'passenger') {
+    console.log("here")
     return <PassengerForm
       selectedBus={selectedBus}
       selectedSeat={selectedSeat}
