@@ -46,321 +46,350 @@ export const apiService = {
   // Profile operations
   getProfile: async (userId: string): Promise<ApiResponse<Profile>> => {
     return handleResponse(
-      supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single()
+      )
     );
   },
 
   updateProfile: async (userId: string, updates: Partial<Profile>): Promise<ApiResponse<Profile>> => {
     return handleResponse(
-      supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', userId)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('profiles')
+          .update(updates)
+          .eq('id', userId)
+          .select()
+          .single()
+      )
     );
   },
 
   // User role operations
   getUserRole: async (userId: string): Promise<ApiResponse<UserRole>> => {
     return handleResponse(
-      supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('user_roles')
+          .select('*')
+          .eq('user_id', userId)
+          .single()
+      )
     );
   },
 
   getAllUserRoles: async (): Promise<ApiResponse<UserRole[]>> => {
     return handleResponse(
-      supabase
-        .from('user_roles')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .then()
+      Promise.resolve(
+        supabase
+          .from('user_roles')
+          .select('*')
+          .order('created_at', { ascending: false })
+      )
     );
   },
 
   createUserRole: async (userRole: Omit<UserRole, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<UserRole>> => {
     return handleResponse(
-      supabase
-        .from('user_roles')
-        .insert(userRole)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('user_roles')
+          .insert(userRole)
+          .select()
+          .single()
+      )
     );
   },
 
   updateUserRole: async (id: string, updates: Partial<Omit<UserRole, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<UserRole>> => {
     return handleResponse(
-      supabase
-        .from('user_roles')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('user_roles')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
+      )
     );
   },
 
   deleteUserRole: async (id: string): Promise<ApiResponse<void>> => {
     return handleResponse(
-      supabase
-        .from('user_roles')
-        .delete()
-        .eq('id', id)
-        .then()
+      Promise.resolve(
+        supabase
+          .from('user_roles')
+          .delete()
+          .eq('id', id)
+      )
     );
   },
 
   // Booking operations
   getUserBookings: async (userId: string): Promise<ApiResponse<Booking[]>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .select('*')
-        .eq('user_id', userId)
-        .order('booking_date', { ascending: false })
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .select('*')
+          .eq('user_id', userId)
+          .order('booking_date', { ascending: false })
+      )
     );
   },
 
   getAllBookings: async (): Promise<ApiResponse<Booking[]>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .select('*')
-        .order('booking_date', { ascending: false })
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .select('*')
+          .order('booking_date', { ascending: false })
+      )
     );
   },
 
   getBookingById: async (id: string): Promise<ApiResponse<Booking>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .select('*')
-        .eq('id', id)
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .select('*')
+          .eq('id', id)
+          .single()
+      )
     );
   },
 
   createBooking: async (booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Booking>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .insert(booking)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .insert(booking)
+          .select()
+          .single()
+      )
     );
   },
 
   updateBooking: async (id: string, updates: Partial<Omit<Booking, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Booking>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
+      )
     );
   },
 
   deleteBooking: async (id: string): Promise<ApiResponse<void>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .delete()
-        .eq('id', id)
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .delete()
+          .eq('id', id)
+      )
     );
   },
 
   // Route operations
   getAllRoutes: async (): Promise<ApiResponse<Route[]>> => {
     return handleResponse(
-      supabase
-        .from('routes')
-        .select('*')
-        .order('name', { ascending: true })
-        .then()
+      Promise.resolve(
+        supabase
+          .from('routes')
+          .select('*')
+          .order('name', { ascending: true })
+      )
     );
   },
 
   getRouteById: async (id: string): Promise<ApiResponse<Route>> => {
     return handleResponse(
-      supabase
-        .from('routes')
-        .select('*')
-        .eq('id', id)
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('routes')
+          .select('*')
+          .eq('id', id)
+          .single()
+      )
     );
   },
 
   createRoute: async (route: Omit<Route, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Route>> => {
     return handleResponse(
-      supabase
-        .from('routes')
-        .insert(route)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('routes')
+          .insert(route)
+          .select()
+          .single()
+      )
     );
   },
 
   updateRoute: async (id: string, updates: Partial<Omit<Route, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Route>> => {
     return handleResponse(
-      supabase
-        .from('routes')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('routes')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
+      )
     );
   },
 
   deleteRoute: async (id: string): Promise<ApiResponse<void>> => {
     return handleResponse(
-      supabase
-        .from('routes')
-        .delete()
-        .eq('id', id)
-        .then()
+      Promise.resolve(
+        supabase
+          .from('routes')
+          .delete()
+          .eq('id', id)
+      )
     );
   },
 
   // Bus operations
   getAllBuses: async (): Promise<ApiResponse<Bus[]>> => {
     return handleResponse(
-      supabase
-        .from('buses')
-        .select('*')
-        .order('bus_number', { ascending: true })
-        .then()
+      Promise.resolve(
+        supabase
+          .from('buses')
+          .select('*')
+          .order('bus_number', { ascending: true })
+      )
     );
   },
 
   getBusById: async (id: string): Promise<ApiResponse<Bus>> => {
     return handleResponse(
-      supabase
-        .from('buses')
-        .select('*')
-        .eq('id', id)
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('buses')
+          .select('*')
+          .eq('id', id)
+          .single()
+      )
     );
   },
 
   createBus: async (bus: Omit<Bus, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Bus>> => {
     return handleResponse(
-      supabase
-        .from('buses')
-        .insert(bus)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('buses')
+          .insert(bus)
+          .select()
+          .single()
+      )
     );
   },
 
   updateBus: async (id: string, updates: Partial<Omit<Bus, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Bus>> => {
     return handleResponse(
-      supabase
-        .from('buses')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('buses')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
+      )
     );
   },
 
   deleteBus: async (id: string): Promise<ApiResponse<void>> => {
     return handleResponse(
-      supabase
-        .from('buses')
-        .delete()
-        .eq('id', id)
-        .then()
+      Promise.resolve(
+        supabase
+          .from('buses')
+          .delete()
+          .eq('id', id)
+      )
     );
   },
 
   // Location operations
   getAllLocations: async (): Promise<ApiResponse<Location[]>> => {
     return handleResponse(
-      supabase
-        .from('locations')
-        .select('*')
-        .order('name', { ascending: true })
-        .then()
+      Promise.resolve(
+        supabase
+          .from('locations')
+          .select('*')
+          .order('name', { ascending: true })
+      )
     );
   },
 
   getLocationById: async (id: string): Promise<ApiResponse<Location>> => {
     return handleResponse(
-      supabase
-        .from('locations')
-        .select('*')
-        .eq('id', id)
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('locations')
+          .select('*')
+          .eq('id', id)
+          .single()
+      )
     );
   },
 
   createLocation: async (location: Omit<Location, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Location>> => {
     return handleResponse(
-      supabase
-        .from('locations')
-        .insert(location)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('locations')
+          .insert(location)
+          .select()
+          .single()
+      )
     );
   },
 
   updateLocation: async (id: string, updates: Partial<Omit<Location, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Location>> => {
     return handleResponse(
-      supabase
-        .from('locations')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-        .then()
+      Promise.resolve(
+        supabase
+          .from('locations')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
+      )
     );
   },
 
   deleteLocation: async (id: string): Promise<ApiResponse<void>> => {
     return handleResponse(
-      supabase
-        .from('locations')
-        .delete()
-        .eq('id', id)
-        .then()
+      Promise.resolve(
+        supabase
+          .from('locations')
+          .delete()
+          .eq('id', id)
+      )
     );
   },
 
   // Analytics
   getUserAnalytics: async (userId: string): Promise<ApiResponse<any>> => {
     return handleResponse(
-      supabase
-        .from('bookings')
-        .select('*')
-        .eq('user_id', userId)
-        .then()
+      Promise.resolve(
+        supabase
+          .from('bookings')
+          .select('*')
+          .eq('user_id', userId)
+      )
     );
   },
 
