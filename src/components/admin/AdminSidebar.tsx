@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -48,18 +49,21 @@ const sidebarItems: SidebarItem[] = [
     title: 'Locations',
     url: '/admin/locations',
     icon: MapPin,
+    permission: 'locations',
     superAdminOnly: true
   },
   {
     title: 'Buses',
     url: '/admin/buses',
     icon: Bus,
+    permission: 'buses',
     superAdminOnly: true
   },
   {
     title: 'Routes',
     url: '/admin/routes',
     icon: Route,
+    permission: 'routes',
     superAdminOnly: true
   }
 ];
@@ -71,12 +75,16 @@ const AdminSidebar = () => {
   const location = useLocation();
 
   const filteredItems = sidebarItems.filter(item => {
+    // If it's superAdmin only and user is not superAdmin, hide it
     if (item.superAdminOnly && userRole !== 'superadmin') {
       return false;
     }
+    
+    // If it has a permission requirement, check if user has that permission
     if (item.permission && !hasPermission(item.permission)) {
       return false;
     }
+    
     return true;
   });
 

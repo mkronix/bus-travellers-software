@@ -21,6 +21,9 @@ import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminLocations from "@/pages/admin/AdminLocations";
+import AdminBuses from "@/pages/admin/AdminBuses";
+import AdminRoutes from "@/pages/admin/AdminRoutes";
 import UserProfile from "@/pages/UserProfile";
 
 const queryClient = new QueryClient();
@@ -51,11 +54,15 @@ const App = () => (
                 {/* Protected routes */}
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<UserProfile />} />
+                
                 {/* Admin routes */}
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="bookings" element={<AdminBookings />} />
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="locations" element={<AdminLocations />} />
+                  <Route path="buses" element={<AdminBuses />} />
+                  <Route path="routes" element={<AdminRoutes />} />
                 </Route>
 
                 {/* Catch all routes */}

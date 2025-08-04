@@ -1,57 +1,61 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'react-hot-toast';
+import type { Database } from '@/integrations/supabase/types';
 
-// Types for our API responses
 export interface ApiResponse<T> {
-  data: T | null;
-  error: string | null;
   success: boolean;
+  data?: T;
+  error?: string;
 }
 
-// Generic API service class
-class ApiService {
-  private async handleResponse<T>(operation: Promise<any>): Promise<ApiResponse<T>> {
-    try {
-      const { data, error } = await operation;
-      
-      if (error) {
-        console.error('API Error:', error);
-        return {
-          data: null,
-          error: error.message,
-          success: false
-        };
-      }
+type Tables = Database['public']['Tables'];
+type Profile = Tables['profiles']['Row'];
+type UserRole = Tables['user_roles']['Row'];
+type Booking = Tables['bookings']['Row'];
+type Route = Tables['routes']['Row'];
+type Bus = Tables['buses']['Row'];
+type Location = Tables['locations']['Row'];
 
+// Helper function to handle Supabase responses
+async function handleResponse<T>(queryPromise: Promise<any>): Promise<ApiResponse<T>> {
+  try {
+    const { data, error } = await queryPromise;
+    
+    if (error) {
+      console.error('API Error:', error);
       return {
-        data,
-        error: null,
-        success: true
-      };
-    } catch (error: any) {
-      console.error('API Exception:', error);
-      return {
-        data: null,
-        error: error.message || 'An unexpected error occurred',
-        success: false
+        success: false,
+        error: error.message
       };
     }
-  }
 
-  // User Profile Operations
-  async getProfile(userId: string) {
-    return this.handleResponse(
+    return {
+      success: true,
+      data
+    };
+  } catch (error: any) {
+    console.error('API Exception:', error);
+    return {
+      success: false,
+      error: error.message || 'An unexpected error occurred'
+    };
+  }
+}
+
+export const apiService = {
+  // Profile operations
+  getProfile: async (userId: string): Promise<ApiResponse<Profile>> => {
+    return handleResponse(
       supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single()
     );
-  }
+  },
 
-  async updateProfile(userId: string, updates: any) {
-    return this.handleResponse(
+  updateProfile: async (userId: string, updates: Partial<Profile>): Promise<ApiResponse<Profile>> => {
+    return handleResponse(
       supabase
         .from('profiles')
         .update(updates)
@@ -59,43 +63,40 @@ class ApiService {
         .select()
         .single()
     );
-  }
+  },
 
-  // User Roles Operations
-  async getUserRole(userId: string) {
-    return this.handleResponse(
+  // User role operations
+  getUserRole: async (userId: string): Promise<ApiResponse<UserRole>> => {
+    return handleResponse(
       supabase
         .from('user_roles')
         .select('*')
         .eq('user_id', userId)
         .single()
     );
-  }
+  },
 
-  async getAllUserRoles() {
-    return this.handleResponse(
+  getAllUserRoles: async (): Promise<ApiResponse<UserRole[]>> => {
+    return handleResponse(
       supabase
         .from('user_roles')
-        .select(`
-          *,
-          profiles!inner(email, full_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
     );
-  }
+  },
 
-  async createUserRole(userRole: any) {
-    return this.handleResponse(
+  createUserRole: async (userRole: Partial<UserRole>): Promise<ApiResponse<UserRole>> => {
+    return handleResponse(
       supabase
         .from('user_roles')
         .insert(userRole)
         .select()
         .single()
     );
-  }
+  },
 
-  async updateUserRole(id: string, updates: any) {
-    return this.handleResponse(
+  updateUserRole: async (id: string, updates: Partial<UserRole>): Promise<ApiResponse<UserRole>> => {
+    return handleResponse(
       supabase
         .from('user_roles')
         .update(updates)
@@ -103,52 +104,59 @@ class ApiService {
         .select()
         .single()
     );
-  }
+  },
 
-  async deleteUserRole(id: string) {
-    return this.handleResponse(
+  deleteUserRole: async (id: string): Promise<ApiResponse<void>> => {
+    return handleResponse(
       supabase
         .from('user_roles')
         .delete()
         .eq('id', id)
     );
-  }
+  },
 
-  // Bookings Operations
-  async getUserBookings(userId: string) {
-    return this.handleResponse(
+  // Booking operations
+  getUserBookings: async (userId: string): Promise<ApiResponse<Booking[]>> => {
+    return handleResponse(
       supabase
         .from('bookings')
         .select('*')
         .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .order('booking_date', { ascending: false })
     );
-  }
+  },
 
-  async getAllBookings() {
-    return this.handleResponse(
+  getAllBookings: async (): Promise<ApiResponse<Booking[]>> => {
+    return handleResponse(
       supabase
         .from('bookings')
-        .select(`
-          *,
-          profiles!inner(email, full_name, phone)
-        `)
-        .order('created_at', { ascending: false })
+        .select('*')
+        .order('booking_date', { ascending: false })
     );
-  }
+  },
 
-  async createBooking(booking: any) {
-    return this.handleResponse(
+  getBookingById: async (id: string): Promise<ApiResponse<Booking>> => {
+    return handleResponse(
+      supabase
+        .from('bookings')
+        .select('*')
+        .eq('id', id)
+        .single()
+    );
+  },
+
+  createBooking: async (booking: Partial<Booking>): Promise<ApiResponse<Booking>> => {
+    return handleResponse(
       supabase
         .from('bookings')
         .insert(booking)
         .select()
         .single()
     );
-  }
+  },
 
-  async updateBooking(id: string, updates: any) {
-    return this.handleResponse(
+  updateBooking: async (id: string, updates: Partial<Booking>): Promise<ApiResponse<Booking>> => {
+    return handleResponse(
       supabase
         .from('bookings')
         .update(updates)
@@ -156,51 +164,49 @@ class ApiService {
         .select()
         .single()
     );
-  }
+  },
 
-  async getBookingById(id: string) {
-    return this.handleResponse(
+  deleteBooking: async (id: string): Promise<ApiResponse<void>> => {
+    return handleResponse(
       supabase
         .from('bookings')
-        .select('*')
+        .delete()
         .eq('id', id)
-        .single()
     );
-  }
+  },
 
-  // Routes Operations
-  async getAllRoutes() {
-    return this.handleResponse(
+  // Route operations
+  getAllRoutes: async (): Promise<ApiResponse<Route[]>> => {
+    return handleResponse(
       supabase
         .from('routes')
         .select('*')
-        .eq('is_active', true)
         .order('name', { ascending: true })
     );
-  }
+  },
 
-  async getRouteById(id: string) {
-    return this.handleResponse(
+  getRouteById: async (id: string): Promise<ApiResponse<Route>> => {
+    return handleResponse(
       supabase
         .from('routes')
         .select('*')
         .eq('id', id)
         .single()
     );
-  }
+  },
 
-  async createRoute(route: any) {
-    return this.handleResponse(
+  createRoute: async (route: Partial<Route>): Promise<ApiResponse<Route>> => {
+    return handleResponse(
       supabase
         .from('routes')
         .insert(route)
         .select()
         .single()
     );
-  }
+  },
 
-  async updateRoute(id: string, updates: any) {
-    return this.handleResponse(
+  updateRoute: async (id: string, updates: Partial<Route>): Promise<ApiResponse<Route>> => {
+    return handleResponse(
       supabase
         .from('routes')
         .update(updates)
@@ -208,56 +214,49 @@ class ApiService {
         .select()
         .single()
     );
-  }
+  },
 
-  async deleteRoute(id: string) {
-    return this.handleResponse(
+  deleteRoute: async (id: string): Promise<ApiResponse<void>> => {
+    return handleResponse(
       supabase
         .from('routes')
-        .update({ is_active: false })
+        .delete()
         .eq('id', id)
     );
-  }
+  },
 
-  // Buses Operations
-  async getAllBuses() {
-    return this.handleResponse(
+  // Bus operations
+  getAllBuses: async (): Promise<ApiResponse<Bus[]>> => {
+    return handleResponse(
       supabase
         .from('buses')
-        .select(`
-          *,
-          routes(name, start_location, end_location)
-        `)
-        .eq('is_active', true)
+        .select('*')
         .order('bus_number', { ascending: true })
     );
-  }
+  },
 
-  async getBusById(id: string) {
-    return this.handleResponse(
+  getBusById: async (id: string): Promise<ApiResponse<Bus>> => {
+    return handleResponse(
       supabase
         .from('buses')
-        .select(`
-          *,
-          routes(*)
-        `)
+        .select('*')
         .eq('id', id)
         .single()
     );
-  }
+  },
 
-  async createBus(bus: any) {
-    return this.handleResponse(
+  createBus: async (bus: Partial<Bus>): Promise<ApiResponse<Bus>> => {
+    return handleResponse(
       supabase
         .from('buses')
         .insert(bus)
         .select()
         .single()
     );
-  }
+  },
 
-  async updateBus(id: string, updates: any) {
-    return this.handleResponse(
+  updateBus: async (id: string, updates: Partial<Bus>): Promise<ApiResponse<Bus>> => {
+    return handleResponse(
       supabase
         .from('buses')
         .update(updates)
@@ -265,49 +264,49 @@ class ApiService {
         .select()
         .single()
     );
-  }
+  },
 
-  async deleteBus(id: string) {
-    return this.handleResponse(
+  deleteBus: async (id: string): Promise<ApiResponse<void>> => {
+    return handleResponse(
       supabase
         .from('buses')
-        .update({ is_active: false })
+        .delete()
         .eq('id', id)
     );
-  }
+  },
 
-  // Locations Operations
-  async getAllLocations() {
-    return this.handleResponse(
+  // Location operations
+  getAllLocations: async (): Promise<ApiResponse<Location[]>> => {
+    return handleResponse(
       supabase
         .from('locations')
         .select('*')
         .order('name', { ascending: true })
     );
-  }
+  },
 
-  async getLocationById(id: string) {
-    return this.handleResponse(
+  getLocationById: async (id: string): Promise<ApiResponse<Location>> => {
+    return handleResponse(
       supabase
         .from('locations')
         .select('*')
         .eq('id', id)
         .single()
     );
-  }
+  },
 
-  async createLocation(location: any) {
-    return this.handleResponse(
+  createLocation: async (location: Partial<Location>): Promise<ApiResponse<Location>> => {
+    return handleResponse(
       supabase
         .from('locations')
         .insert(location)
         .select()
         .single()
     );
-  }
+  },
 
-  async updateLocation(id: string, updates: any) {
-    return this.handleResponse(
+  updateLocation: async (id: string, updates: Partial<Location>): Promise<ApiResponse<Location>> => {
+    return handleResponse(
       supabase
         .from('locations')
         .update(updates)
@@ -315,113 +314,54 @@ class ApiService {
         .select()
         .single()
     );
-  }
+  },
 
-  async deleteLocation(id: string) {
-    return this.handleResponse(
+  deleteLocation: async (id: string): Promise<ApiResponse<void>> => {
+    return handleResponse(
       supabase
         .from('locations')
         .delete()
         .eq('id', id)
     );
-  }
+  },
 
-  // Search Operations
-  async searchBuses(from: string, to: string, date: string) {
-    return this.handleResponse(
-      supabase
-        .from('buses')
-        .select(`
-          *,
-          routes!inner(*)
-        `)
-        .eq('is_active', true)
-        .or(`start_location.ilike.%${from}%,end_location.ilike.%${to}%`, { foreignTable: 'routes' })
-    );
-  }
+  // Analytics
+  getUserAnalytics: async (userId: string): Promise<ApiResponse<any>> => {
+    const bookingsPromise = supabase
+      .from('bookings')
+      .select('*')
+      .eq('user_id', userId);
 
-  // Analytics Operations
-  async getUserAnalytics(userId: string) {
-    const bookingsResponse = await this.handleResponse(
-      supabase
-        .from('bookings')
-        .select('amount, booking_status')
-        .eq('user_id', userId)
-    );
+    return handleResponse(bookingsPromise);
+  },
 
-    if (!bookingsResponse.success || !bookingsResponse.data) {
-      return bookingsResponse;
-    }
-
-    const bookings = bookingsResponse.data;
-    const totalSpent = bookings.reduce((sum: number, booking: any) => sum + (booking.amount || 0), 0);
-    const completedTrips = bookings.filter((booking: any) => booking.booking_status === 'confirmed').length;
-    const averageRating = 4.5; // Placeholder since we don't have ratings yet
-
-    return {
-      data: {
-        totalSpent,
-        completedTrips,
-        averageRating,
-        totalBookings: bookings.length
-      },
-      error: null,
-      success: true
-    };
-  }
-
-  async getAdminAnalytics() {
-    const [bookingsRes, usersRes, busesRes] = await Promise.all([
-      this.handleResponse(
-        supabase
-          .from('bookings')
-          .select('amount, booking_status, created_at')
-      ),
-      this.handleResponse(
-        supabase
-          .from('profiles')
-          .select('created_at')
-      ),
-      this.handleResponse(
-        supabase
-          .from('buses')
-          .select('id')
-          .eq('is_active', true)
-      )
+  getAdminAnalytics: async (): Promise<ApiResponse<any>> => {
+    const [bookings, users, buses, routes] = await Promise.all([
+      supabase.from('bookings').select('*'),
+      supabase.from('profiles').select('*'),
+      supabase.from('buses').select('*'),
+      supabase.from('routes').select('*')
     ]);
 
-    if (!bookingsRes.success || !usersRes.success || !busesRes.success) {
+    if (bookings.error || users.error || buses.error || routes.error) {
       return {
-        data: null,
-        error: 'Failed to fetch analytics data',
-        success: false
+        success: false,
+        error: 'Failed to fetch analytics data'
       };
     }
 
-    const bookings = bookingsRes.data || [];
-    const users = usersRes.data || [];
-    const buses = busesRes.data || [];
-
-    const totalRevenue = bookings.reduce((sum: number, booking: any) => sum + (booking.amount || 0), 0);
-    const totalBookings = bookings.length;
-    const totalUsers = users.length;
-    const totalBuses = buses.length;
-
     return {
+      success: true,
       data: {
-        totalRevenue,
-        totalBookings,
-        totalUsers,
-        totalBuses
-      },
-      error: null,
-      success: true
+        totalBookings: bookings.data?.length || 0,
+        totalUsers: users.data?.length || 0,
+        totalBuses: buses.data?.length || 0,
+        totalRoutes: routes.data?.length || 0,
+        bookings: bookings.data || [],
+        users: users.data || [],
+        buses: buses.data || [],
+        routes: routes.data || []
+      }
     };
   }
-}
-
-// Create and export a singleton instance
-export const apiService = new ApiService();
-
-// Export individual services for convenience
-export default apiService;
+};
