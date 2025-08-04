@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface AutocompleteOption {
+export interface AutocompleteOption {
   label: string
   value: string
   image?: string
@@ -75,8 +75,8 @@ export function Autocomplete({
                 >
                   <div className="flex items-center space-x-2 w-full">
                     {option.image && (
-                      <img 
-                        src={option.image} 
+                      <img
+                        src={option.image}
                         alt={option.label}
                         className="w-8 h-8 object-cover rounded-sm flex-shrink-0"
                       />
