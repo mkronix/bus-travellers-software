@@ -9,7 +9,7 @@ const AdminLayout = () => {
     <AdminGuard requiredRole="superadmin">
       <div className="flex bg-gray-50">
         <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-        <main className={`${collapsed ? 'ml-16' : 'ml-64'} flex-1 overflow-auto`}>
+        <main className={`${collapsed ? 'ml-16' : 'ml-56'} flex-1 overflow-auto`}>
           <Outlet />
         </main>
       </div>

@@ -22,6 +22,8 @@ const Header = () => {
   const getNavigationItems = () => {
     const items = [
       { icon: Bus, label: "Home", href: "/" },
+      { icon: Users, label: "About Us", href: "/about-us" },
+      { icon: MapPin, label: "Contact Us", href: "/contact-us" },
     ];
 
     return items;

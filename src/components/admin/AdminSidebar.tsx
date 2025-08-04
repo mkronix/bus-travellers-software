@@ -92,7 +92,7 @@ const AdminSidebar = ({ collapsed, setCollapsed }: { collapsed: boolean; setColl
   return (
     <div className={cn(
       "bg-white h-screen fixed left-0 border-r border-gray-200 transition-all duration-300 flex flex-col",
-      collapsed ? "w-16" : "w-64"
+      collapsed ? "w-16" : "w-56"
     )}>
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -120,7 +120,7 @@ const AdminSidebar = ({ collapsed, setCollapsed }: { collapsed: boolean; setColl
               <NavLink
                 to={item.url}
                 className={cn(
-                  `flex items-center ${!collapsed ? "justify-center" : ""} px-3 py-2 rounded-lg transition-colors duration-200`,
+                  `flex items-center ${collapsed ? "justify-center" : ""} px-3 py-2 rounded-lg transition-colors duration-200`,
                   isActive(item.url)
                     ? "bg-primary text-white"
                     : "text-gray-700 hover:bg-gray-100"
