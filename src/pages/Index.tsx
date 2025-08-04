@@ -1,35 +1,30 @@
+import CitySearch from '@/components/CitySearch';
+import Header from '@/components/Header';
+import PassengerForm from '@/components/PassengerForm';
+import SearchResults from '@/components/SearchResults';
+import SeatSelection from '@/components/SeatSelection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
-import { GUJARATI_CITIES } from '@/data/cities';
-import CitySearch from '@/components/CitySearch';
-import Header from '@/components/Header';
 import { useDialog } from '@/contexts/DialogContext';
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Award,
   Bus,
-  Calendar,
+  Clock,
+  Coffee,
   HeartHandshake,
   Mail,
   MapPin,
   Phone,
   Shield,
+  Star,
   UserPlus,
   Users,
-  Star,
-  Clock,
-  Wifi,
-  Coffee,
-  Menu,
-  X
+  Wifi
 } from 'lucide-react';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import SearchResults from '@/components/SearchResults';
-import SeatSelection from '@/components/SeatSelection';
-import PassengerForm from '@/components/PassengerForm';
-import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState<'search' | 'results' | 'seat' | 'passenger'>('search');
@@ -41,7 +36,6 @@ const Index = () => {
   });
   const [selectedBus, setSelectedBus] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string>('');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const { showAlert } = useDialog();
 
@@ -58,13 +52,11 @@ const Index = () => {
   };
 
   const handleBusSelection = (bus: any) => {
-    console.log('Bus selected:', bus);
     setSelectedBus(bus);
     setCurrentStep('seat');
   };
 
   const handleSeatSelection = (seatId: string) => {
-    console.log('Seat selected:', seatId);
     setSelectedSeat(seatId);
     setCurrentStep('passenger');
   };
@@ -119,7 +111,7 @@ const Index = () => {
       selectedBus={selectedBus}
       searchData={searchData}
       onSeatSelect={handleSeatSelection}
-      onBackToSearch={handleBackToResults}
+      onBackToResults={handleBackToResults}
     />;
   }
 

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Bus, MapPin, Shield, Sparkles } from 'lucide-react';
+import { Bus, Shield, UserPlus2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const features = [
   {
@@ -12,28 +12,20 @@ const features = [
   },
   {
     id: 2,
-    title: 'Real-time Tracking',
-    description: 'Track your bus in real-time and get notifications about delays or changes.',
-    icon: MapPin,
+    title: 'Trusted By Many',
+    description: 'Trust us with your bus tickets and enjoy hassle-free travel.',
+    icon: UserPlus2,
     gradient: 'from-[#93b618] to-[#A8C733]',
     bgPattern: 'from-[#93b618]/10 to-[#4E4884]/10',
   },
   {
     id: 3,
-    title: 'Secure Payments',
+    title: 'Hassle-Free Payments',
     description: 'Multiple payment options with bank-grade security for safe transactions.',
     icon: Shield,
     gradient: 'from-[#6B5FAE] to-[#93b618]',
     bgPattern: 'from-[#6B5FAE]/10 to-[#A8C733]/10',
-  },
-  {
-    id: 4,
-    title: 'Smart Suggestions',
-    description: 'Get personalized route suggestions based on your travel history.',
-    icon: Sparkles,
-    gradient: 'from-[#A8C733] to-[#4E4884]',
-    bgPattern: 'from-[#A8C733]/10 to-[#6B5FAE]/10',
-  },
+  }
 ];
 
 const FeatureSlider = () => {
@@ -46,14 +38,6 @@ const FeatureSlider = () => {
 
     return () => clearInterval(timer);
   }, []);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % features.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + features.length) % features.length);
-  };
 
   const CurrentIcon = features[currentSlide].icon;
 

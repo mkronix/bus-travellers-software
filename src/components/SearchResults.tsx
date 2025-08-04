@@ -291,8 +291,6 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
                   <SelectItem value="all">All Buses</SelectItem>
                   <SelectItem value="ac">AC Only</SelectItem>
                   <SelectItem value="nonac">Non-AC Only</SelectItem>
-                  <SelectItem value="sleeper">Sleeper</SelectItem>
-                  <SelectItem value="seater">Seater</SelectItem>
                 </SelectContent>
               </Select>
             </div>

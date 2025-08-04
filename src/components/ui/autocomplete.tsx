@@ -147,7 +147,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
       <div className="relative group">
         {icon && (
           <motion.div
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10"
+            className="absolute left-3 top-4 transform -translate-y-1/2 z-10"
             animate={{
               scale: isOpen ? 1.1 : 1,
               color: isOpen ? "#6366f1" : "#6b7280"
@@ -177,7 +177,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         />
 
         <motion.div
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"
+          className="absolute right-3 top-4 transform -translate-y-1/2 pointer-events-none"
           animate={{
             rotate: isOpen ? 180 : 0,
             color: isOpen ? "#6366f1" : "#6b7280"

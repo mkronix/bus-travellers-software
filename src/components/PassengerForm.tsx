@@ -284,6 +284,8 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
                           type="number"
                           {...register('mainPassenger.age', { valueAsNumber: true })}
                           placeholder="Enter age"
+                          maxLength={2}
+                          min={1}
                           className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
                         />
                         {errors.mainPassenger?.age && (
@@ -328,6 +330,9 @@ const PassengerForm = ({ selectedBus, selectedSeat, searchData, onBackToSeat }: 
                           id="mainPassengerMobile"
                           {...register('mainPassenger.mobile')}
                           placeholder="Enter 10-digit mobile number"
+                          maxLength={10}
+                          minLength={10}
+                          type="tel"
                           className="mt-2 h-12 border-2 rounded-xl focus:border-primary transition-colors"
                         />
                         {errors.mainPassenger?.mobile && (
