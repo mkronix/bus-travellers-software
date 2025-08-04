@@ -27,6 +27,8 @@ import Index from "./pages/Index";
 import MyBookingsPage from "./pages/MyBookingsPage";
 import NotFound from "./pages/NotFound";
 import TrackBusPage from "./pages/TrackBusPage";
+import AboutUsPage from "./pages/AboutUsPage";
+import ContactUsPage from "./pages/auth/ContactUsPage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +45,11 @@ const App = () => (
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
+                <Route path="/" element={<UserLayout />}>
+                  <Route path="about-us" element={<AboutUsPage />} />
+                  <Route path="contact-us" element={<ContactUsPage />} />
+                </Route>
+
 
                 {/* Auth routes */}
                 <Route path="/" element={<AuthLayout />}>
