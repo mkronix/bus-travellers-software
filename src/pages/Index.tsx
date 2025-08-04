@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Autocomplete, AutocompleteOption } from '@/components/ui/autocomplete';
-import { cities } from '@/data/cities';
+import { Autocomplete } from '@/components/ui/autocomplete';
+import { GUJARATI_CITIES } from '@/data/cities';
 import {
   ArrowRight,
   Award,
@@ -128,14 +128,6 @@ const Index = () => {
       onBackToSeat={handleBackToSeat}
     />;
   }
-
-  const autoCompleteData: AutocompleteOption[] = cities.map(city => {
-    return {
-      label: city.name,
-      value: city.name,
-      image: city.image
-    }
-  })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -355,10 +347,11 @@ const Index = () => {
                       whileFocus={{ scale: 1.02 }}
                     >
                       <Autocomplete
-                        options={autoCompleteData}
+                        options={GUJARATI_CITIES}
                         value={searchData.from}
-                        onValueChange={(value) => setSearchData({ ...searchData, from: value })}
+                        onChange={(value) => setSearchData({ ...searchData, from: value })}
                         placeholder="From City"
+                        icon={<MapPin className="h-4 w-4 text-primary" />}
                         className="w-full"
                       />
                     </motion.div>
@@ -368,10 +361,11 @@ const Index = () => {
                       whileFocus={{ scale: 1.02 }}
                     >
                       <Autocomplete
-                        options={autoCompleteData.filter(city => city.label !== searchData.from)}
+                        options={GUJARATI_CITIES.filter(city => city.name !== searchData.from)}
                         value={searchData.to}
-                        onValueChange={(value) => setSearchData({ ...searchData, to: value })}
+                        onChange={(value) => setSearchData({ ...searchData, to: value })}
                         placeholder="To City"
+                        icon={<MapPin className="h-4 w-4 text-secondary" />}
                         className="w-full"
                       />
                     </motion.div>
