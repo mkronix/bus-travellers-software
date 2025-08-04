@@ -24,7 +24,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from || '/dashboard';
+  const from = location.state?.from || '/profile';
 
   const {
     register,

@@ -1,3 +1,0 @@
-Don 't Change any exisitng Ui and  Just revisit functionality it make it properly working 
-6. will user , super admin and agents will use same login portal? if yes than need to manage properly based on thier roles we need to show only specific routes
-7. need a user profile acount dashboard with 2 3 anlaltics and he can update his information , can check his history of booking and can donwload the e-ticket 

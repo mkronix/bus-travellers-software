@@ -25,18 +25,18 @@ const AdminGuard = ({ children, requiredRole, requiredPermission }: AdminGuardPr
       // Check role requirement
       if (requiredRole) {
         if (requiredRole === 'superadmin' && userRole !== 'superadmin') {
-          navigate('/dashboard');
+          navigate('/profile');
           return;
         }
         if (requiredRole === 'agent' && userRole !== 'superadmin' && userRole !== 'agent') {
-          navigate('/dashboard');
+          navigate('/profile');
           return;
         }
       }
 
       // Check permission requirement
       if (requiredPermission && !hasPermission(requiredPermission)) {
-        navigate('/dashboard');
+        navigate('/profile');
         return;
       }
     }

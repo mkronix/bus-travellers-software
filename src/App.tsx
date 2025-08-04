@@ -1,30 +1,32 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as HotToaster } from "react-hot-toast";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
-import { AdminProvider } from "@/hooks/useAdmin";
-import { DialogProvider } from "@/contexts/DialogContext";
-import AuthLayout from "@/pages/auth/AuthLayout";
+import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
-import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
-import VerifyOtpForm from "@/components/auth/VerifyOtpForm";
 import UpdatePasswordForm from "@/components/auth/UpdatePasswordForm";
-import Dashboard from "@/pages/Dashboard";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import AdminLayout from "@/pages/admin/AdminLayout";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
+import VerifyOtpForm from "@/components/auth/VerifyOtpForm";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { DialogProvider } from "@/contexts/DialogContext";
+import { AdminProvider } from "@/hooks/useAdmin";
+import { AuthProvider } from "@/hooks/useAuth";
 import AdminBookings from "@/pages/admin/AdminBookings";
-import AdminUsers from "@/pages/admin/AdminUsers";
-import AdminLocations from "@/pages/admin/AdminLocations";
 import AdminBuses from "@/pages/admin/AdminBuses";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminLayout from "@/pages/admin/AdminLayout";
+import AdminLocations from "@/pages/admin/AdminLocations";
 import AdminRoutes from "@/pages/admin/AdminRoutes";
+import AdminUsers from "@/pages/admin/AdminUsers";
+import AuthLayout from "@/pages/auth/AuthLayout";
 import UserProfile from "@/pages/UserProfile";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster as HotToaster } from "react-hot-toast";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserLayout from "./components/UserLayout";
+import Index from "./pages/Index";
+import MyBookingsPage from "./pages/MyBookingsPage";
+import NotFound from "./pages/NotFound";
+import TrackBusPage from "./pages/TrackBusPage";
 
 const queryClient = new QueryClient();
 
@@ -50,11 +52,12 @@ const App = () => (
                   <Route path="verify-otp" element={<VerifyOtpForm />} />
                   <Route path="update-password" element={<UpdatePasswordForm />} />
                 </Route>
+                <Route path="/" element={<UserLayout />}>
+                  <Route path="profile" element={<UserProfile />} />
+                  <Route path="my-bookings" element={<MyBookingsPage />} />
+                  <Route path="track-bus" element={<TrackBusPage />} />
+                </Route>
 
-                {/* Protected routes */}
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<UserProfile />} />
-                
                 {/* Admin routes */}
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route path="dashboard" element={<AdminDashboard />} />

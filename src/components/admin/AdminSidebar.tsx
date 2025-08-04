@@ -1,22 +1,21 @@
 
-import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAdmin } from '@/hooks/useAdmin';
+import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
 import {
-  LayoutDashboard,
   BookOpen,
-  Users,
-  MapPin,
   Bus,
-  Route,
   ChevronLeft,
   ChevronRight,
+  LayoutDashboard,
   LogOut,
-  Settings
+  MapPin,
+  Route,
+  Users
 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useAdmin } from '@/hooks/useAdmin';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Dispatch, SetStateAction } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 interface SidebarItem {
   title: string;
@@ -68,8 +67,8 @@ const sidebarItems: SidebarItem[] = [
   }
 ];
 
-const AdminSidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+const AdminSidebar = ({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: Dispatch<SetStateAction<boolean>> }) => {
+
   const { signOut } = useAuth();
   const { userRole, hasPermission } = useAdmin();
   const location = useLocation();
@@ -79,12 +78,12 @@ const AdminSidebar = () => {
     if (item.superAdminOnly && userRole !== 'superadmin') {
       return false;
     }
-    
+
     // If it has a permission requirement, check if user has that permission
     if (item.permission && !hasPermission(item.permission)) {
       return false;
     }
-    
+
     return true;
   });
 
@@ -92,7 +91,7 @@ const AdminSidebar = () => {
 
   return (
     <div className={cn(
-      "bg-white border-r border-gray-200 h-full transition-all duration-300 flex flex-col",
+      "bg-white h-screen fixed left-0 border-r border-gray-200 transition-all duration-300 flex flex-col",
       collapsed ? "w-16" : "w-64"
     )}>
       {/* Header */}
@@ -121,7 +120,7 @@ const AdminSidebar = () => {
               <NavLink
                 to={item.url}
                 className={cn(
-                  "flex items-center px-3 py-2 rounded-lg transition-colors duration-200",
+                  `flex items-center ${!collapsed ? "justify-center" : ""} px-3 py-2 rounded-lg transition-colors duration-200`,
                   isActive(item.url)
                     ? "bg-primary text-white"
                     : "text-gray-700 hover:bg-gray-100"
@@ -133,6 +132,7 @@ const AdminSidebar = () => {
                 )}
               </NavLink>
             </li>
+
           ))}
         </ul>
       </nav>

@@ -21,7 +21,7 @@ const AuthGuard = ({ children, requireAuth = true }: AuthGuardProps) => {
         navigate('/login', { state: { from: location.pathname } });
       } else if (!requireAuth && user) {
         // If user is logged in and trying to access auth pages, redirect to dashboard
-        navigate('/dashboard');
+        navigate('/profile');
       }
     }
   }, [user, loading, navigate, location, requireAuth]);

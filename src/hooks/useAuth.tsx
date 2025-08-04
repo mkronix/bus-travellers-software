@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           },
         },
       });
-      
+
       if (error) {
         console.error('SignUp error:', error);
         throw error;
@@ -87,12 +87,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setLoading(true);
       console.log('Attempting to sign in with:', email);
-      
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password: password,
       });
-      
+
       if (error) {
         console.error('SignIn error:', error);
         throw error;
@@ -118,10 +118,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/profile`,
         },
       });
-      
+
       if (error) throw error;
     } catch (error: any) {
       console.error('Google sign in error:', error);
@@ -153,7 +153,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/update-password`,
       });
-      
+
       if (error) throw error;
       toast.success('Password reset email sent!');
     } catch (error: any) {
@@ -171,7 +171,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.updateUser({
         password,
       });
-      
+
       if (error) throw error;
       toast.success('Password updated successfully');
     } catch (error: any) {
