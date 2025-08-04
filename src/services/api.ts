@@ -85,7 +85,7 @@ export const apiService = {
     );
   },
 
-  createUserRole: async (userRole: Partial<UserRole>): Promise<ApiResponse<UserRole>> => {
+  createUserRole: async (userRole: Omit<UserRole, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<UserRole>> => {
     return handleResponse(
       supabase
         .from('user_roles')
@@ -95,7 +95,7 @@ export const apiService = {
     );
   },
 
-  updateUserRole: async (id: string, updates: Partial<UserRole>): Promise<ApiResponse<UserRole>> => {
+  updateUserRole: async (id: string, updates: Partial<Omit<UserRole, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<UserRole>> => {
     return handleResponse(
       supabase
         .from('user_roles')
@@ -145,7 +145,7 @@ export const apiService = {
     );
   },
 
-  createBooking: async (booking: Partial<Booking>): Promise<ApiResponse<Booking>> => {
+  createBooking: async (booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Booking>> => {
     return handleResponse(
       supabase
         .from('bookings')
@@ -155,7 +155,7 @@ export const apiService = {
     );
   },
 
-  updateBooking: async (id: string, updates: Partial<Booking>): Promise<ApiResponse<Booking>> => {
+  updateBooking: async (id: string, updates: Partial<Omit<Booking, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Booking>> => {
     return handleResponse(
       supabase
         .from('bookings')
@@ -195,7 +195,7 @@ export const apiService = {
     );
   },
 
-  createRoute: async (route: Partial<Route>): Promise<ApiResponse<Route>> => {
+  createRoute: async (route: Omit<Route, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Route>> => {
     return handleResponse(
       supabase
         .from('routes')
@@ -205,7 +205,7 @@ export const apiService = {
     );
   },
 
-  updateRoute: async (id: string, updates: Partial<Route>): Promise<ApiResponse<Route>> => {
+  updateRoute: async (id: string, updates: Partial<Omit<Route, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Route>> => {
     return handleResponse(
       supabase
         .from('routes')
@@ -245,7 +245,7 @@ export const apiService = {
     );
   },
 
-  createBus: async (bus: Partial<Bus>): Promise<ApiResponse<Bus>> => {
+  createBus: async (bus: Omit<Bus, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Bus>> => {
     return handleResponse(
       supabase
         .from('buses')
@@ -255,7 +255,7 @@ export const apiService = {
     );
   },
 
-  updateBus: async (id: string, updates: Partial<Bus>): Promise<ApiResponse<Bus>> => {
+  updateBus: async (id: string, updates: Partial<Omit<Bus, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Bus>> => {
     return handleResponse(
       supabase
         .from('buses')
@@ -295,7 +295,7 @@ export const apiService = {
     );
   },
 
-  createLocation: async (location: Partial<Location>): Promise<ApiResponse<Location>> => {
+  createLocation: async (location: Omit<Location, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Location>> => {
     return handleResponse(
       supabase
         .from('locations')
@@ -305,7 +305,7 @@ export const apiService = {
     );
   },
 
-  updateLocation: async (id: string, updates: Partial<Location>): Promise<ApiResponse<Location>> => {
+  updateLocation: async (id: string, updates: Partial<Omit<Location, 'id' | 'created_at' | 'updated_at'>>): Promise<ApiResponse<Location>> => {
     return handleResponse(
       supabase
         .from('locations')
@@ -327,41 +327,48 @@ export const apiService = {
 
   // Analytics
   getUserAnalytics: async (userId: string): Promise<ApiResponse<any>> => {
-    const bookingsPromise = supabase
-      .from('bookings')
-      .select('*')
-      .eq('user_id', userId);
-
-    return handleResponse(bookingsPromise);
+    return handleResponse(
+      supabase
+        .from('bookings')
+        .select('*')
+        .eq('user_id', userId)
+    );
   },
 
   getAdminAnalytics: async (): Promise<ApiResponse<any>> => {
-    const [bookings, users, buses, routes] = await Promise.all([
-      supabase.from('bookings').select('*'),
-      supabase.from('profiles').select('*'),
-      supabase.from('buses').select('*'),
-      supabase.from('routes').select('*')
-    ]);
+    try {
+      const [bookings, users, buses, routes] = await Promise.all([
+        supabase.from('bookings').select('*'),
+        supabase.from('profiles').select('*'),
+        supabase.from('buses').select('*'),
+        supabase.from('routes').select('*')
+      ]);
 
-    if (bookings.error || users.error || buses.error || routes.error) {
+      if (bookings.error || users.error || buses.error || routes.error) {
+        return {
+          success: false,
+          error: 'Failed to fetch analytics data'
+        };
+      }
+
+      return {
+        success: true,
+        data: {
+          totalBookings: bookings.data?.length || 0,
+          totalUsers: users.data?.length || 0,
+          totalBuses: buses.data?.length || 0,
+          totalRoutes: routes.data?.length || 0,
+          bookings: bookings.data || [],
+          users: users.data || [],
+          buses: buses.data || [],
+          routes: routes.data || []
+        }
+      };
+    } catch (error: any) {
       return {
         success: false,
-        error: 'Failed to fetch analytics data'
+        error: error.message || 'Failed to fetch analytics data'
       };
     }
-
-    return {
-      success: true,
-      data: {
-        totalBookings: bookings.data?.length || 0,
-        totalUsers: users.data?.length || 0,
-        totalBuses: buses.data?.length || 0,
-        totalRoutes: routes.data?.length || 0,
-        bookings: bookings.data || [],
-        users: users.data || [],
-        buses: buses.data || [],
-        routes: routes.data || []
-      }
-    };
   }
 };
