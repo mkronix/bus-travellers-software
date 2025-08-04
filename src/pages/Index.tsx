@@ -10,6 +10,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Autocomplete } from '@/components/ui/autocomplete';
 import { cities } from '@/data/cities';
 import { useAuth } from '@/hooks/useAuth';
+import Header from '@/components/Header';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -47,54 +48,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">R</span>
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">Rajdhani Bus Service</h1>
-            </div>
-            <nav className="flex items-center space-x-6">
-              {user ? (
-                <>
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/my-bookings')}
-                    className="text-gray-700 hover:text-primary"
-                  >
-                    My Bookings
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/profile')}
-                    className="text-gray-700 hover:text-primary"
-                  >
-                    Profile
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/login')}
-                    className="text-gray-700 hover:text-primary"
-                  >
-                    Login
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/signup')}
-                    className="bg-primary hover:bg-primary/90 text-white"
-                  >
-                    Sign Up
-                  </Button>
-                </>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12">

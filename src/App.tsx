@@ -9,7 +9,7 @@ import { AdminProvider } from "@/hooks/useAdmin";
 import Index from "./pages/Index";
 import SearchResults from "./components/SearchResults";
 import SeatSelection from "./components/SeatSelection";
-import PassengerForm from "./components/PassengerForm";
+import PassengerFormWrapper from "./components/PassengerFormWrapper";
 import Dashboard from "./pages/Dashboard";
 import AuthLayout from "./pages/auth/AuthLayout";
 import MyBookings from "./pages/MyBookings";
@@ -34,7 +34,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/search-results" element={<SearchResults />} />
               <Route path="/seat-selection" element={<SeatSelection />} />
-              <Route path="/passenger-form" element={<PassengerForm />} />
+              <Route path="/passenger-form" element={<PassengerFormWrapper />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/my-bookings" element={<MyBookings />} />
               <Route path="/profile" element={<Profile />} />
