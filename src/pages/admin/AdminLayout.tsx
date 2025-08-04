@@ -4,7 +4,7 @@ import AdminGuard from '@/components/admin/AdminGuard';
 
 const AdminLayout = () => {
   return (
-    <AdminGuard requiredRole="agent">
+    <AdminGuard requiredRole="superadmin">
       <div className="min-h-screen flex bg-gray-50">
         <AdminSidebar />
         <main className="flex-1 overflow-auto">

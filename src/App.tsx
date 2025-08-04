@@ -36,33 +36,31 @@ const App = () => (
               <Toaster />
               <Sonner />
               <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Index />} />
-              
-              {/* Auth routes */}
-              <Route path="/" element={<AuthLayout />}>
-                <Route path="login" element={<LoginForm />} />
-                <Route path="signup" element={<SignupForm />} />
-                <Route path="forgot-password" element={<ForgotPasswordForm />} />
-                <Route path="verify-otp" element={<VerifyOtpForm />} />
-                <Route path="update-password" element={<UpdatePasswordForm />} />
-              </Route>
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
 
-              {/* Protected routes */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/my-bookings" element={<UserProfile />} />
+                {/* Auth routes */}
+                <Route path="/" element={<AuthLayout />}>
+                  <Route path="login" element={<LoginForm />} />
+                  <Route path="signup" element={<SignupForm />} />
+                  <Route path="forgot-password" element={<ForgotPasswordForm />} />
+                  <Route path="verify-otp" element={<VerifyOtpForm />} />
+                  <Route path="update-password" element={<UpdatePasswordForm />} />
+                </Route>
 
-              {/* Admin routes */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="bookings" element={<AdminBookings />} />
-                <Route path="users" element={<AdminUsers />} />
-              </Route>
+                {/* Protected routes */}
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/profile" element={<UserProfile />} />
+                {/* Admin routes */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="bookings" element={<AdminBookings />} />
+                  <Route path="users" element={<AdminUsers />} />
+                </Route>
 
-              {/* Catch all routes */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                {/* Catch all routes */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </DialogProvider>
           </AdminProvider>
         </AuthProvider>
