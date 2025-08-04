@@ -1,7 +1,0 @@
-1. use the image with name of the citites in search suggestion
-2. remove the seater option in filter
-3. the flow of booking has some error when seaarch the buses i move to searchResults but from thier after selecting  the bus i m not moving to seat selection and then we have to move to proper passenger form
-4. create a default superadmin user only once the app runs so that he can login and with login page 
-5. and on header My Bookings menu will be show to logged in users only and that to tpye of role no agent or superadmin and if agent or superadmin than show dashboard mneu
-6. will user , super admin and agents will use same login portal? if yes than need to manage properly based on thier roles we need to show only specific routes 
-7. need a user profile acount dashboard with 2 3 anlaltics and he can update his information , can check his history of booking and can donwload the e-ticket 

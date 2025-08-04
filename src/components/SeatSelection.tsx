@@ -328,8 +328,8 @@ const SeatSelection = ({ selectedBus, searchData, onSeatSelect, onBackToSearch }
                       <motion.button
                         key={filter.key}
                         className={`px-3 py-2 bg-white rounded-lg text-sm font-medium border transition-colors ${filterBy === filter.key
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'hover:border-primary/30'
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'hover:border-primary/30'
                           }`}
                         onClick={() => setFilterBy(filter.key)}
                         whileTap={{ scale: 0.95 }}
