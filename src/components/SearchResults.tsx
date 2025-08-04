@@ -2,34 +2,33 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
+  ArrowRight,
+  Award,
+  Bus,
+  CheckCircle,
+  ChevronDown,
   Clock,
   Coffee,
   Filter,
   MapPin,
+  Music,
   Shield,
   Star,
-  Wifi,
-  Bus,
   Users,
-  Calendar,
-  ArrowRight,
-  ChevronDown,
-  Zap,
-  Award,
-  Wind,
-  Music,
   Utensils,
-  CheckCircle
+  Wifi,
+  Wind,
+  Zap
 } from 'lucide-react';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface BusResult {
   id: number;
   operator: string;
-  busType: 'AC Sleeper' | 'Non-AC Sleeper' | 'AC Seater' | 'Non-AC Seater';
+  busType: 'AC' | 'Non-AC';
   departureTime: string;
   arrivalTime: string;
   duration: string;
@@ -62,7 +61,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
     {
       id: 1,
       operator: "Rajdhani Express",
-      busType: "AC Sleeper",
+      busType: "AC",
       departureTime: "06:30",
       arrivalTime: "14:30",
       duration: "8h 00m",
@@ -77,7 +76,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
     {
       id: 2,
       operator: "Gujarat Express",
-      busType: "Non-AC Sleeper",
+      busType: "Non-AC",
       departureTime: "22:15",
       arrivalTime: "06:45",
       duration: "8h 30m",
@@ -92,7 +91,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
     {
       id: 3,
       operator: "Royal Travels",
-      busType: "AC Seater",
+      busType: "AC",
       departureTime: "14:45",
       arrivalTime: "21:15",
       duration: "6h 30m",
@@ -107,7 +106,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
     {
       id: 4,
       operator: "Budget Express",
-      busType: "Non-AC Seater",
+      busType: "Non-AC",
       departureTime: "09:00",
       arrivalTime: "16:30",
       duration: "7h 30m",
@@ -121,17 +120,12 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
     }
   ];
 
-  // Filter buses based on selected filter
   const filteredBuses = busResults.filter(bus => {
     switch (filterBy) {
       case 'ac':
         return bus.busType.includes('AC');
       case 'nonac':
         return bus.busType.includes('Non-AC');
-      case 'sleeper':
-        return bus.busType.includes('Sleeper');
-      case 'seater':
-        return bus.busType.includes('Seater');
       default:
         return true;
     }
@@ -327,8 +321,8 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
                       <motion.button
                         key={filter.key}
                         className={`px-3 py-2 bg-white rounded-lg text-sm font-medium border transition-colors ${filterBy === filter.key
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'hover:border-primary/30'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'hover:border-primary/30'
                           }`}
                         onClick={() => setFilterBy(filter.key)}
                         whileTap={{ scale: 0.95 }}

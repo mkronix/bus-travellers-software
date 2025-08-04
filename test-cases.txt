@@ -1,5 +1,6 @@
-1. use the image with name of the citites in search suggestion
-2. remove the seater option in filter
+Dont remove exisitng Ui and functionality Just revisit it make it properly working and if need new changes start 
+
+1. use the image with name of the citites in search suggestion with same exisiting Ui 
 3. the flow of booking has some error when seaarch the buses i move to searchResults but from thier after selecting  the bus i m not moving to seat selection and then we have to move to proper passenger form
 4. create a default superadmin user only once the app runs so that he can login and with login page 
 5. and on header My Bookings menu will be show to logged in users only and that to tpye of role no agent or superadmin and if agent or superadmin than show dashboard mneu
