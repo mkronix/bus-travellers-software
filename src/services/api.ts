@@ -337,14 +337,14 @@ export const apiService = {
 
   getAdminAnalytics: async (): Promise<ApiResponse<any>> => {
     try {
-      const [bookings, users, buses, routes] = await Promise.all([
+      const [bookingsRes, usersRes, busesRes, routesRes] = await Promise.all([
         supabase.from('bookings').select('*'),
         supabase.from('profiles').select('*'),
         supabase.from('buses').select('*'),
         supabase.from('routes').select('*')
       ]);
 
-      if (bookings.error || users.error || buses.error || routes.error) {
+      if (bookingsRes.error || usersRes.error || busesRes.error || routesRes.error) {
         return {
           success: false,
           error: 'Failed to fetch analytics data'
@@ -354,14 +354,14 @@ export const apiService = {
       return {
         success: true,
         data: {
-          totalBookings: bookings.data?.length || 0,
-          totalUsers: users.data?.length || 0,
-          totalBuses: buses.data?.length || 0,
-          totalRoutes: routes.data?.length || 0,
-          bookings: bookings.data || [],
-          users: users.data || [],
-          buses: buses.data || [],
-          routes: routes.data || []
+          totalBookings: bookingsRes.data?.length || 0,
+          totalUsers: usersRes.data?.length || 0,
+          totalBuses: busesRes.data?.length || 0,
+          totalRoutes: routesRes.data?.length || 0,
+          bookings: bookingsRes.data || [],
+          users: usersRes.data || [],
+          buses: busesRes.data || [],
+          routes: routesRes.data || []
         }
       };
     } catch (error: any) {
