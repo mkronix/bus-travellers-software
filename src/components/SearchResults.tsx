@@ -120,6 +120,11 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
     }
   ];
 
+  const handleBusSelect = (bus: BusResult) => {
+    console.log('SearchResults: Bus selected:', bus);
+    onBusSelect(bus);
+  };
+
   const filteredBuses = busResults.filter(bus => {
     switch (filterBy) {
       case 'ac':
@@ -443,7 +448,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
                     >
                       <Button
                         className="bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg w-full py-2.5 rounded-xl font-semibold text-sm"
-                        onClick={() => onBusSelect(bus)}
+                        onClick={() => handleBusSelect(bus)}
                       >
                         Select Seats
                         <ArrowRight className="h-4 w-4 ml-2" />
@@ -545,7 +550,7 @@ const SearchResults = ({ searchData, onBusSelect, onBackToSearch }: SearchResult
                         >
                           <Button
                             className="bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg px-6 py-2.5 rounded-xl font-semibold"
-                            onClick={() => onBusSelect(bus)}
+                            onClick={() => handleBusSelect(bus)}
                           >
                             Select Seats
                             <ArrowRight className="h-4 w-4 ml-2" />

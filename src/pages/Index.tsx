@@ -58,11 +58,13 @@ const Index = () => {
   };
 
   const handleBusSelection = (bus: any) => {
+    console.log('Bus selected:', bus);
     setSelectedBus(bus);
     setCurrentStep('seat');
   };
 
   const handleSeatSelection = (seatId: string) => {
+    console.log('Seat selected:', seatId);
     setSelectedSeat(seatId);
     setCurrentStep('passenger');
   };
@@ -112,7 +114,7 @@ const Index = () => {
     />;
   }
 
-  if (currentStep === 'seat') {
+  if (currentStep === 'seat' && selectedBus) {
     return <SeatSelection
       selectedBus={selectedBus}
       searchData={searchData}
@@ -121,7 +123,7 @@ const Index = () => {
     />;
   }
 
-  if (currentStep === 'passenger') {
+  if (currentStep === 'passenger' && selectedBus && selectedSeat) {
     return <PassengerForm
       selectedBus={selectedBus}
       selectedSeat={selectedSeat}
