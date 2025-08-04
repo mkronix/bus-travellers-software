@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Search, Plus, Edit, Trash2, Bus } from 'lucide-react';
 import { useApi, useApiMutation } from '@/hooks/useApi';
 import { apiService } from '@/services/api';
@@ -16,35 +15,40 @@ import toast from 'react-hot-toast';
 
 interface BusFormData {
   bus_number: string;
-  bus_type: string;
-  seating_type: string;
-  total_seats: number;
-  base_price: number;
   driver_name: string;
   driver_phone: string;
-  helper_name?: string;
-  helper_phone?: string;
+  helper_name: string;
+  helper_phone: string;
+  bus_type: string;
+  total_seats: number;
+  base_price: number;
+  seating_type: string;
   is_active: boolean;
+  route_id: string | null;
+  images: any[];
 }
 
 const AdminBuses = () => {
   const { data: buses, loading, refetch } = useApi(() => apiService.getAllBuses(), []);
+  const { data: routes } = useApi(() => apiService.getAllRoutes(), []);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedBus, setSelectedBus] = useState<any>(null);
   const [formData, setFormData] = useState<BusFormData>({
     bus_number: '',
-    bus_type: '',
-    seating_type: '',
-    total_seats: 0,
-    base_price: 0,
     driver_name: '',
     driver_phone: '',
     helper_name: '',
     helper_phone: '',
-    is_active: true
+    bus_type: '',
+    total_seats: 0,
+    base_price: 0,
+    seating_type: '',
+    is_active: true,
+    route_id: null,
+    images: []
   });
 
   const createMutation = useApiMutation(
@@ -84,22 +88,24 @@ const AdminBuses = () => {
   const filteredBuses = buses?.filter(bus => {
     const matchesSearch = bus.bus_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       bus.driver_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || (statusFilter === 'active' ? bus.is_active : !bus.is_active);
-    return matchesSearch && matchesStatus;
+    const matchesType = typeFilter === 'all' || bus.bus_type === typeFilter;
+    return matchesSearch && matchesType;
   }) || [];
 
   const resetForm = () => {
     setFormData({
       bus_number: '',
-      bus_type: '',
-      seating_type: '',
-      total_seats: 0,
-      base_price: 0,
       driver_name: '',
       driver_phone: '',
       helper_name: '',
       helper_phone: '',
-      is_active: true
+      bus_type: '',
+      total_seats: 0,
+      base_price: 0,
+      seating_type: '',
+      is_active: true,
+      route_id: null,
+      images: []
     });
     setSelectedBus(null);
   };
@@ -112,15 +118,17 @@ const AdminBuses = () => {
     setSelectedBus(bus);
     setFormData({
       bus_number: bus.bus_number,
-      bus_type: bus.bus_type,
-      seating_type: bus.seating_type,
-      total_seats: bus.total_seats,
-      base_price: bus.base_price,
       driver_name: bus.driver_name,
       driver_phone: bus.driver_phone,
       helper_name: bus.helper_name || '',
       helper_phone: bus.helper_phone || '',
-      is_active: bus.is_active
+      bus_type: bus.bus_type,
+      total_seats: bus.total_seats,
+      base_price: bus.base_price,
+      seating_type: bus.seating_type,
+      is_active: bus.is_active,
+      route_id: bus.route_id,
+      images: bus.images || []
     });
     setIsEditDialogOpen(true);
   };
@@ -154,7 +162,7 @@ const AdminBuses = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Bus Management</h1>
-            <p className="text-gray-600">Manage your fleet of buses</p>
+            <p className="text-gray-600">Manage all buses and their details</p>
           </div>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
@@ -187,27 +195,13 @@ const AdminBuses = () => {
                       <SelectContent>
                         <SelectItem value="AC">AC</SelectItem>
                         <SelectItem value="Non-AC">Non-AC</SelectItem>
+                        <SelectItem value="Volvo">Volvo</SelectItem>
                         <SelectItem value="Sleeper">Sleeper</SelectItem>
-                        <SelectItem value="Semi-Sleeper">Semi-Sleeper</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-                
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="seating_type">Seating Type</Label>
-                    <Select value={formData.seating_type} onValueChange={(value) => setFormData({ ...formData, seating_type: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select seating type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="2+2">2+2</SelectItem>
-                        <SelectItem value="2+3">2+3</SelectItem>
-                        <SelectItem value="1+2">1+2</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="total_seats">Total Seats</Label>
                     <Input
@@ -218,19 +212,30 @@ const AdminBuses = () => {
                       placeholder="Enter total seats"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="base_price">Base Price</Label>
+                    <Input
+                      id="base_price"
+                      type="number"
+                      value={formData.base_price}
+                      onChange={(e) => setFormData({ ...formData, base_price: parseFloat(e.target.value) || 0 })}
+                      placeholder="Enter base price"
+                    />
+                  </div>
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="base_price">Base Price (₹)</Label>
-                  <Input
-                    id="base_price"
-                    type="number"
-                    value={formData.base_price}
-                    onChange={(e) => setFormData({ ...formData, base_price: parseFloat(e.target.value) || 0 })}
-                    placeholder="Enter base price"
-                  />
+                  <Label htmlFor="seating_type">Seating Type</Label>
+                  <Select value={formData.seating_type} onValueChange={(value) => setFormData({ ...formData, seating_type: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select seating type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2+2">2+2</SelectItem>
+                      <SelectItem value="2+3">2+3</SelectItem>
+                      <SelectItem value="1+1">1+1</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="driver_name">Driver Name</Label>
@@ -251,10 +256,9 @@ const AdminBuses = () => {
                     />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="helper_name">Helper Name (Optional)</Label>
+                    <Label htmlFor="helper_name">Helper Name</Label>
                     <Input
                       id="helper_name"
                       value={formData.helper_name}
@@ -263,7 +267,7 @@ const AdminBuses = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="helper_phone">Helper Phone (Optional)</Label>
+                    <Label htmlFor="helper_phone">Helper Phone</Label>
                     <Input
                       id="helper_phone"
                       value={formData.helper_phone}
@@ -272,7 +276,22 @@ const AdminBuses = () => {
                     />
                   </div>
                 </div>
-
+                <div className="space-y-2">
+                  <Label htmlFor="route_id">Route</Label>
+                  <Select value={formData.route_id || ''} onValueChange={(value) => setFormData({ ...formData, route_id: value || null })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select route (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No Route</SelectItem>
+                      {routes?.map((route) => (
+                        <SelectItem key={route.id} value={route.id}>
+                          {route.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button onClick={handleCreate} className="w-full" disabled={createMutation.loading}>
                   {createMutation.loading ? 'Creating...' : 'Create Bus'}
                 </Button>
@@ -295,14 +314,16 @@ const AdminBuses = () => {
                   />
                 </div>
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-full lg:w-48">
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="AC">AC</SelectItem>
+                  <SelectItem value="Non-AC">Non-AC</SelectItem>
+                  <SelectItem value="Volvo">Volvo</SelectItem>
+                  <SelectItem value="Sleeper">Sleeper</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -329,24 +350,16 @@ const AdminBuses = () => {
                           <span className="font-medium">{bus.bus_number}</span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{bus.bus_type}</div>
-                          <div className="text-sm text-gray-500">{bus.seating_type}</div>
-                        </div>
-                      </TableCell>
+                      <TableCell>{bus.bus_type}</TableCell>
                       <TableCell>{bus.total_seats}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{bus.driver_name}</div>
-                          <div className="text-sm text-gray-500">{bus.driver_phone}</div>
-                        </div>
-                      </TableCell>
+                      <TableCell>{bus.driver_name}</TableCell>
                       <TableCell>₹{bus.base_price}</TableCell>
                       <TableCell>
-                        <Badge variant={bus.is_active ? 'default' : 'secondary'}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          bus.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
                           {bus.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
+                        </span>
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
@@ -377,7 +390,6 @@ const AdminBuses = () => {
               <DialogTitle>Edit Bus</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              {/* Same form fields as create, but with edit_ prefixes for ids */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit_bus_number">Bus Number</Label>
@@ -396,27 +408,13 @@ const AdminBuses = () => {
                     <SelectContent>
                       <SelectItem value="AC">AC</SelectItem>
                       <SelectItem value="Non-AC">Non-AC</SelectItem>
+                      <SelectItem value="Volvo">Volvo</SelectItem>
                       <SelectItem value="Sleeper">Sleeper</SelectItem>
-                      <SelectItem value="Semi-Sleeper">Semi-Sleeper</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-              
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit_seating_type">Seating Type</Label>
-                  <Select value={formData.seating_type} onValueChange={(value) => setFormData({ ...formData, seating_type: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="2+2">2+2</SelectItem>
-                      <SelectItem value="2+3">2+3</SelectItem>
-                      <SelectItem value="1+2">1+2</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit_total_seats">Total Seats</Label>
                   <Input
@@ -426,18 +424,29 @@ const AdminBuses = () => {
                     onChange={(e) => setFormData({ ...formData, total_seats: parseInt(e.target.value) || 0 })}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_base_price">Base Price</Label>
+                  <Input
+                    id="edit_base_price"
+                    type="number"
+                    value={formData.base_price}
+                    onChange={(e) => setFormData({ ...formData, base_price: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="edit_base_price">Base Price (₹)</Label>
-                <Input
-                  id="edit_base_price"
-                  type="number"
-                  value={formData.base_price}
-                  onChange={(e) => setFormData({ ...formData, base_price: parseFloat(e.target.value) || 0 })}
-                />
+                <Label htmlFor="edit_seating_type">Seating Type</Label>
+                <Select value={formData.seating_type} onValueChange={(value) => setFormData({ ...formData, seating_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2+2">2+2</SelectItem>
+                    <SelectItem value="2+3">2+3</SelectItem>
+                    <SelectItem value="1+1">1+1</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit_driver_name">Driver Name</Label>
@@ -456,7 +465,6 @@ const AdminBuses = () => {
                   />
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit_helper_name">Helper Name</Label>
@@ -475,18 +483,22 @@ const AdminBuses = () => {
                   />
                 </div>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="edit_is_active"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="rounded"
-                />
-                <Label htmlFor="edit_is_active">Active</Label>
+              <div className="space-y-2">
+                <Label htmlFor="edit_route_id">Route</Label>
+                <Select value={formData.route_id || ''} onValueChange={(value) => setFormData({ ...formData, route_id: value || null })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No Route</SelectItem>
+                    {routes?.map((route) => (
+                      <SelectItem key={route.id} value={route.id}>
+                        {route.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-
               <Button onClick={handleUpdate} className="w-full" disabled={updateMutation.loading}>
                 {updateMutation.loading ? 'Updating...' : 'Update Bus'}
               </Button>

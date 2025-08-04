@@ -19,7 +19,7 @@ interface LocationFormData {
   address: string;
   type: string;
   contact_number: string;
-  manager_id?: string;
+  manager_id: string | null;
 }
 
 const AdminLocations = () => {
@@ -34,11 +34,18 @@ const AdminLocations = () => {
     address: '',
     type: '',
     contact_number: '',
-    manager_id: ''
+    manager_id: null
   });
 
   const createMutation = useApiMutation(
-    (data: LocationFormData) => apiService.createLocation(data),
+    (data: LocationFormData) => {
+      // Ensure manager_id is properly formatted for the database
+      const formattedData = {
+        ...data,
+        manager_id: data.manager_id || null
+      };
+      return apiService.createLocation(formattedData);
+    },
     {
       onSuccess: () => {
         toast.success('Location created successfully');
@@ -50,7 +57,14 @@ const AdminLocations = () => {
   );
 
   const updateMutation = useApiMutation(
-    ({ id, data }: { id: string; data: LocationFormData }) => apiService.updateLocation(id, data),
+    ({ id, data }: { id: string; data: LocationFormData }) => {
+      // Ensure manager_id is properly formatted for the database
+      const formattedData = {
+        ...data,
+        manager_id: data.manager_id || null
+      };
+      return apiService.updateLocation(id, formattedData);
+    },
     {
       onSuccess: () => {
         toast.success('Location updated successfully');
@@ -84,7 +98,7 @@ const AdminLocations = () => {
       address: '',
       type: '',
       contact_number: '',
-      manager_id: ''
+      manager_id: null
     });
     setSelectedLocation(null);
   };
@@ -100,7 +114,7 @@ const AdminLocations = () => {
       address: location.address,
       type: location.type,
       contact_number: location.contact_number || '',
-      manager_id: location.manager_id || ''
+      manager_id: location.manager_id || null
     });
     setIsEditDialogOpen(true);
   };
