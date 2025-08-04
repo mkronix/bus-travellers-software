@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Autocomplete } from '@/components/ui/autocomplete';
 import { GUJARATI_CITIES } from '@/data/cities';
+import CitySearch from '@/components/CitySearch';
+import Header from '@/components/Header';
+import { useDialog } from '@/contexts/DialogContext';
 import {
   ArrowRight,
   Award,
@@ -41,14 +43,15 @@ const Index = () => {
   const [selectedSeat, setSelectedSeat] = useState<string>('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleContinueBooking = () => {
+  const { showAlert } = useDialog();
+
+  const handleContinueBooking = async () => {
     if (!searchData.from || !searchData.to || !searchData.date) {
-      // Using native alert for now - you can replace with your toast system
-      alert('🚌 Please fill all search fields');
+      await showAlert('🚌 Please fill all search fields', 'Missing Information');
       return;
     }
     if (searchData.from === searchData.to) {
-      alert('🔄 From and To cities cannot be the same');
+      await showAlert('🔄 From and To cities cannot be the same', 'Invalid Selection');
       return;
     }
     setCurrentStep('results');
@@ -129,120 +132,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header */}
-      <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50"
-      >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <motion.div
-              className="flex items-center space-x-3"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <div className="relative">
-                <Bus className="h-8 w-8 text-primary" />
-                <motion.div
-                  className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
-              </div>
-              <div>
-                <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Rajdhani Travels
-                </span>
-                <p className="text-xs md:text-sm text-gray-600">Your Trusted Travel Partner</p>
-              </div>
-            </motion.div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              {[
-                { icon: Bus, label: "Home" },
-                { icon: Calendar, label: "My Bookings" },
-                { icon: Phone, label: "Contact" }
-              ].map((item, index) => (
-                <motion.a
-                  key={item.label}
-                  href="#"
-                  className="text-gray-700 hover:text-primary transition-colors duration-200 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary/5"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-                </motion.a>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Button asChild>
-                  <Link to="/login" className="bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg transition-all duration-300">
-                    <Users className="h-4 w-4 mr-2" />
-                    Login
-                  </Link>
-                </Button>
-              </motion.div>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <motion.button
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </motion.button>
-          </div>
-
-          {/* Mobile Navigation */}
-          <AnimatePresence>
-            {isMobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="md:hidden mt-4 py-4 border-t border-gray-100"
-              >
-                <div className="flex flex-col space-y-2">
-                  {[
-                    { icon: Bus, label: "Home" },
-                    { icon: Calendar, label: "My Bookings" },
-                    { icon: Phone, label: "Contact" }
-                  ].map((item, index) => (
-                    <motion.a
-                      key={item.label}
-                      href="#"
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </motion.a>
-                  ))}
-                  <Button asChild>
-                    <Link to="/login" className="bg-gradient-to-r from-primary to-secondary text-white">
-                      <Users className="h-4 w-4 mr-2" />
-                      Login
-                    </Link>
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.header>
+      <Header />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-secondary py-16 md:py-24">
@@ -344,12 +234,10 @@ const Index = () => {
                       whileHover={{ scale: 1.02 }}
                       whileFocus={{ scale: 1.02 }}
                     >
-                      <Autocomplete
-                        options={GUJARATI_CITIES}
+                      <CitySearch
                         value={searchData.from}
                         onChange={(value) => setSearchData({ ...searchData, from: value })}
                         placeholder="From City"
-                        icon={<MapPin className="h-4 w-4 text-primary" />}
                         className="w-full"
                       />
                     </motion.div>
@@ -358,13 +246,13 @@ const Index = () => {
                       whileHover={{ scale: 1.02 }}
                       whileFocus={{ scale: 1.02 }}
                     >
-                      <Autocomplete
-                        options={GUJARATI_CITIES.filter(city => city.name !== searchData.from)}
+                      <CitySearch
                         value={searchData.to}
                         onChange={(value) => setSearchData({ ...searchData, to: value })}
                         placeholder="To City"
-                        icon={<MapPin className="h-4 w-4 text-secondary" />}
                         className="w-full"
+                        isDestination={true}
+                        excludeCity={searchData.from}
                       />
                     </motion.div>
                   </div>

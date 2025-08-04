@@ -279,6 +279,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_default_superadmin: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_transaction_id: {
         Args: Record<PropertyKey, never>
         Returns: string

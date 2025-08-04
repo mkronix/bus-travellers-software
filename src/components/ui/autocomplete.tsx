@@ -5,12 +5,13 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AutocompleteProps {
-  options: Array<{ id: number; name: string; code?: string }>;
+  options: Array<{ id: number; name: string; code?: string; image?: string }>;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   icon?: React.ReactNode;
   className?: string;
+  renderOption?: (option: any) => React.ReactNode;
 }
 
 export const Autocomplete: React.FC<AutocompleteProps> = ({
@@ -19,7 +20,8 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   onChange,
   placeholder = "Select...",
   icon = <MapPin className="h-4 w-4 text-primary" />,
-  className
+  className,
+  renderOption
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState(options);
@@ -215,27 +217,31 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                     }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <motion.div
-                      className="w-10 h-10 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center mr-3 flex-shrink-0 group-hover/option:from-primary/20 group-hover/option:to-secondary/20 transition-all"
-                      whileHover={{ rotate: 5 }}
-                    >
-                      <MapPin className="h-5 w-5 text-primary" />
-                    </motion.div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900 group-hover/option:text-primary transition-colors">
-                        {option.name}
-                      </div>
-                      <div className="text-sm text-gray-500 group-hover/option:text-gray-600 transition-colors">
-                        Gujarat, India
-                      </div>
-                    </div>
-                    {option.code && (
-                      <motion.div
-                        className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-mono group-hover/option:bg-primary/10 group-hover/option:text-primary transition-all"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {option.code}
-                      </motion.div>
+                    {renderOption ? renderOption(option) : (
+                      <>
+                        <motion.div
+                          className="w-10 h-10 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center mr-3 flex-shrink-0 group-hover/option:from-primary/20 group-hover/option:to-secondary/20 transition-all"
+                          whileHover={{ rotate: 5 }}
+                        >
+                          <MapPin className="h-5 w-5 text-primary" />
+                        </motion.div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-gray-900 group-hover/option:text-primary transition-colors">
+                            {option.name}
+                          </div>
+                          <div className="text-sm text-gray-500 group-hover/option:text-gray-600 transition-colors">
+                            Gujarat, India
+                          </div>
+                        </div>
+                        {option.code && (
+                          <motion.div
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-mono group-hover/option:bg-primary/10 group-hover/option:text-primary transition-all"
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            {option.code}
+                          </motion.div>
+                        )}
+                      </>
                     )}
                   </motion.div>
                 ))}

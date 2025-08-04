@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { AdminProvider } from "@/hooks/useAdmin";
+import { DialogProvider } from "@/contexts/DialogContext";
 import AuthLayout from "@/pages/auth/AuthLayout";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
@@ -20,6 +21,7 @@ import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminUsers from "@/pages/admin/AdminUsers";
+import UserProfile from "@/pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -29,10 +31,11 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <AdminProvider>
-            <HotToaster position="top-center" />
-            <Toaster />
-            <Sonner />
-            <Routes>
+            <DialogProvider>
+              <HotToaster position="top-center" />
+              <Toaster />
+              <Sonner />
+              <Routes>
               {/* Public routes */}
               <Route path="/" element={<Index />} />
               
@@ -47,6 +50,8 @@ const App = () => (
 
               {/* Protected routes */}
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/my-bookings" element={<UserProfile />} />
 
               {/* Admin routes */}
               <Route path="/admin" element={<AdminLayout />}>
@@ -58,6 +63,7 @@ const App = () => (
               {/* Catch all routes */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </DialogProvider>
           </AdminProvider>
         </AuthProvider>
       </BrowserRouter>
