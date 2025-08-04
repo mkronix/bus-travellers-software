@@ -1,39 +1,136 @@
 
 export interface City {
-  id: number;
+  id: string;
   name: string;
-  code: string;
   state: string;
-  isActive: boolean;
+  image?: string;
 }
 
-export const GUJARATI_CITIES: City[] = [
-  { id: 1, name: "Ahmedabad", code: "AMD", state: "Gujarat", isActive: true },
-  { id: 2, name: "Anand", code: "ANA", state: "Gujarat", isActive: true },
-  { id: 3, name: "Ankleshwar", code: "ANK", state: "Gujarat", isActive: true },
-  { id: 4, name: "Bharuch", code: "BHR", state: "Gujarat", isActive: true },
-  { id: 5, name: "Chhapi", code: "CHP", state: "Gujarat", isActive: true },
-  { id: 6, name: "Chhatral", code: "CHT", state: "Gujarat", isActive: true },
-  { id: 7, name: "Deesa", code: "DEE", state: "Gujarat", isActive: true },
-  { id: 8, name: "Kalol", code: "KLO", state: "Gujarat", isActive: true },
-  { id: 9, name: "Kanodar", code: "KAN", state: "Gujarat", isActive: true },
-  { id: 10, name: "Koita", code: "KOI", state: "Gujarat", isActive: true },
-  { id: 11, name: "Mehsana", code: "MEH", state: "Gujarat", isActive: true },
-  { id: 12, name: "Nadiad", code: "NAD", state: "Gujarat", isActive: true },
-  { id: 13, name: "Nandasan", code: "NAN", state: "Gujarat", isActive: true },
-  { id: 14, name: "Navsari", code: "NAV", state: "Gujarat", isActive: true },
-  { id: 15, name: "Palanpur", code: "PAL", state: "Gujarat", isActive: true },
-  { id: 16, name: "Patan", code: "PAT", state: "Gujarat", isActive: true },
-  { id: 17, name: "Siddhpur", code: "SID", state: "Gujarat", isActive: true },
-  { id: 18, name: "Surat", code: "SUR", state: "Gujarat", isActive: true },
-  { id: 19, name: "Unava", code: "UNA", state: "Gujarat", isActive: true },
-  { id: 20, name: "Unjha", code: "UNJ", state: "Gujarat", isActive: true }
+export const cities: City[] = [
+  {
+    id: '1',
+    name: 'Ahmedabad',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=200&h=150&fit=crop'
+  },
+  {
+    id: '2', 
+    name: 'Anand',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '3',
+    name: 'Ankleshwar',
+    state: 'Gujarat', 
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '4',
+    name: 'Bharuch',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '5',
+    name: 'Chhapi',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '6',
+    name: 'Chhatral',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '7',
+    name: 'Deesa',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '8',
+    name: 'Kalol',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '9',
+    name: 'Kanodar',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '10',
+    name: 'Koita',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '11',
+    name: 'Mehsana',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '12',
+    name: 'Mumbai',
+    state: 'Maharashtra',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '13',
+    name: 'Nadiad',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '14',
+    name: 'Nandasan',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '15',
+    name: 'Navsari',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '16',
+    name: 'Palanpur',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '17',
+    name: 'Patan',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '18',
+    name: 'Siddhpur',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '19',
+    name: 'Surat',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '20',
+    name: 'Unava',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  },
+  {
+    id: '21',
+    name: 'Unjha',
+    state: 'Gujarat',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=200&h=150&fit=crop'
+  }
 ];
-
-export const getCityByName = (name: string): City | undefined => {
-  return GUJARATI_CITIES.find(city => city.name.toLowerCase() === name.toLowerCase());
-};
-
-export const getCityById = (id: number): City | undefined => {
-  return GUJARATI_CITIES.find(city => city.id === id);
-};
