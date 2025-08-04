@@ -51,6 +51,7 @@ export const apiService = {
         .select('*')
         .eq('id', userId)
         .single()
+        .then()
     );
   },
 
@@ -62,6 +63,7 @@ export const apiService = {
         .eq('id', userId)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -73,6 +75,7 @@ export const apiService = {
         .select('*')
         .eq('user_id', userId)
         .single()
+        .then()
     );
   },
 
@@ -82,6 +85,7 @@ export const apiService = {
         .from('user_roles')
         .select('*')
         .order('created_at', { ascending: false })
+        .then()
     );
   },
 
@@ -92,6 +96,7 @@ export const apiService = {
         .insert(userRole)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -103,6 +108,7 @@ export const apiService = {
         .eq('id', id)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -112,6 +118,7 @@ export const apiService = {
         .from('user_roles')
         .delete()
         .eq('id', id)
+        .then()
     );
   },
 
@@ -123,6 +130,7 @@ export const apiService = {
         .select('*')
         .eq('user_id', userId)
         .order('booking_date', { ascending: false })
+        .then()
     );
   },
 
@@ -132,6 +140,7 @@ export const apiService = {
         .from('bookings')
         .select('*')
         .order('booking_date', { ascending: false })
+        .then()
     );
   },
 
@@ -142,6 +151,7 @@ export const apiService = {
         .select('*')
         .eq('id', id)
         .single()
+        .then()
     );
   },
 
@@ -152,6 +162,7 @@ export const apiService = {
         .insert(booking)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -163,6 +174,7 @@ export const apiService = {
         .eq('id', id)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -172,6 +184,7 @@ export const apiService = {
         .from('bookings')
         .delete()
         .eq('id', id)
+        .then()
     );
   },
 
@@ -182,6 +195,7 @@ export const apiService = {
         .from('routes')
         .select('*')
         .order('name', { ascending: true })
+        .then()
     );
   },
 
@@ -192,6 +206,7 @@ export const apiService = {
         .select('*')
         .eq('id', id)
         .single()
+        .then()
     );
   },
 
@@ -202,6 +217,7 @@ export const apiService = {
         .insert(route)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -213,6 +229,7 @@ export const apiService = {
         .eq('id', id)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -222,6 +239,7 @@ export const apiService = {
         .from('routes')
         .delete()
         .eq('id', id)
+        .then()
     );
   },
 
@@ -232,6 +250,7 @@ export const apiService = {
         .from('buses')
         .select('*')
         .order('bus_number', { ascending: true })
+        .then()
     );
   },
 
@@ -242,6 +261,7 @@ export const apiService = {
         .select('*')
         .eq('id', id)
         .single()
+        .then()
     );
   },
 
@@ -252,6 +272,7 @@ export const apiService = {
         .insert(bus)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -263,6 +284,7 @@ export const apiService = {
         .eq('id', id)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -272,6 +294,7 @@ export const apiService = {
         .from('buses')
         .delete()
         .eq('id', id)
+        .then()
     );
   },
 
@@ -282,6 +305,7 @@ export const apiService = {
         .from('locations')
         .select('*')
         .order('name', { ascending: true })
+        .then()
     );
   },
 
@@ -292,6 +316,7 @@ export const apiService = {
         .select('*')
         .eq('id', id)
         .single()
+        .then()
     );
   },
 
@@ -302,6 +327,7 @@ export const apiService = {
         .insert(location)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -313,6 +339,7 @@ export const apiService = {
         .eq('id', id)
         .select()
         .single()
+        .then()
     );
   },
 
@@ -322,6 +349,7 @@ export const apiService = {
         .from('locations')
         .delete()
         .eq('id', id)
+        .then()
     );
   },
 
@@ -332,6 +360,7 @@ export const apiService = {
         .from('bookings')
         .select('*')
         .eq('user_id', userId)
+        .then()
     );
   },
 
